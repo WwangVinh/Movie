@@ -7,23 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 using Movie.Repository;
+using Movie.RequestDTO;
 
 namespace Movie.ControllerWeb
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MoviesController : ControllerBase
+    public class SeriesController : ControllerBase
     {
-        private readonly IMovieRepository _movieRepository;
+        private readonly ISeriesRepository _seriesRepository;
 
-        public MoviesController(IMovieRepository movieRepository)
+        public SeriesController(ISeriesRepository seriesRepository)
         {
-            _movieRepository = movieRepository;
+            _seriesRepository = seriesRepository;
         }
-        [HttpGet("detailMovie/{id}")]
-        public async Task<IActionResult> GetDetailMovie(int id)
+
+        [HttpGet("detailSeries/{id}")]
+        public async Task<ActionResult<RequestSeriesDTO>> GetDetailMovie(int id)
         {
-            var movie = await _movieRepository.GetMovieByIdAsync(id);
+            var movie = await _seriesRepository.GetSeriesByIdAsync(id);
             if (movie == null)
             {
                 return NotFound("Không tìm thấy phim.");

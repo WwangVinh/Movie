@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace Movie.Models
+namespace Movie.RequestDTO
 {
     public class RequestSeriesDTO
     {
@@ -13,7 +14,7 @@ namespace Movie.Models
 
         public string? Description { get; set; }
 
-        public int? DirectorId { get; set; }  // Thay đổi thành nullable nếu có thể là null
+        public int? DirectorId { get; set; }  // Nullable nếu có thể là null
 
         [StringLength(255)]
         public string? Professional { get; set; }
@@ -32,14 +33,30 @@ namespace Movie.Models
 
         public bool? IsHot { get; set; }
 
-        public DateTime? YearReleased { get; set; }
+        public int? YearReleased { get; set; }
 
         public int? Season { get; set; }
 
         public decimal? Rating { get; set; }
 
-        public DateTime? DeletedAt { get; set; } // Nếu series bị xóa, bạn có thể lưu thời gian xóa
+        public string? ActorsIds { get; set; } // Có thể là chuỗi ID của các diễn viên
 
-        public DateTime? RestoredAt { get; set; } // Nếu series được khôi phục, bạn có thể lưu thời gian khôi phục
+        public string? CategoriesIds { get; set; } // Có thể là chuỗi ID của các thể loại
+
+        public DateTime? DeletedAt { get; set; } // Lưu thời gian xóa nếu cần
+
+        public DateTime? RestoredAt { get; set; } // Lưu thời gian khôi phục nếu cần
+
+        // Các thuộc tính nhận tệp từ form
+        [Required(ErrorMessage = "Poster file is required")]
+        public IFormFile PosterFile { get; set; }  // Tệp ảnh Poster
+
+        [Required(ErrorMessage = "Avatar file is required")]
+        public IFormFile AvatarFile { get; set; }  // Tệp ảnh Avatar 
     }
+}
+public class ActorDTO
+{
+    public int ActorId { get; set; }
+    public string NameAct { get; set; }
 }

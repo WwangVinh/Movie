@@ -18,7 +18,7 @@ namespace Movie.Repository
         Task<RequestUserDTO> GetUserByIdAsync(int id);
 
         // Lấy thông tin người dùng theo Username
-        Task<RequestUserDTO> GetUserByUsernameAsync(string username);
+        Task<RequestUserDTO> GetUserByUserNameAsync(string username);
 
         // Lấy thông tin người dùng theo Email
         Task<RequestUserDTO> GetUserByEmailAsync(string email);

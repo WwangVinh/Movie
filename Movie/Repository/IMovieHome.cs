@@ -13,5 +13,6 @@ namespace Movie.Repository
         Task<IEnumerable<RequestMovieDTO>> GetHotMovieAsync();
         Task<IEnumerable<RequestMovieDTO>> GetSeriesMovieAsync();
         Task<IEnumerable<RequestMovieDTO>> GetActionMovieAsync();
+
     }
 }

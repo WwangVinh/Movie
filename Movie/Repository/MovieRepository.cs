@@ -43,10 +43,10 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\Movies\\";
             if (file == null) return null;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "Movies", folderName);
+            var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -61,14 +61,14 @@ namespace Movie.Repository
             }
 
             // Lưu đường dẫn  
-            return $" C:/Users/phlinh/Documents/C#/Movie/Assets/{folderName}/{fileName}";
+            return $" https://source.cmcglobal.com.vn/g1/du1.33/be-base/-/raw/main/Assets/{folderName}/{fileName}";
         }
 
         //  Thêm phim
         public async Task<RequestMovieDTO> AddAsync(RequestMovieDTO movieDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
         {
             var posterUrl = await SaveFileAsync(posterFile, "Posters");
-            var AvatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrls");
+            var AvatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
 
             var movie = new Movies
             {
@@ -114,7 +114,7 @@ namespace Movie.Repository
 
                 foreach (var actor in actorId)
                 {
-                    _context.MovieActors.Add(new MovieActor
+                    _context.MovieActor.Add(new MovieActor
                     {
                         MovieId = movie.MovieId,
                         ActorId = Int32.Parse(actor)
@@ -152,11 +152,12 @@ namespace Movie.Repository
             return movieDTO;
         }
 
+        //List Movie
         public async Task<IEnumerable<RequestMovieDTO>> GetMovieAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID)
         {
             var query = _context.Movies
                 .Include(m => m.Director)
-                .Include(m => m.MovieActors).ThenInclude(ma => ma.Actors)
+                .Include(m => m.MovieActor).ThenInclude(ma => ma.Actors)
                 .Include(m => m.MovieCategories).ThenInclude(mc => mc.Categories)
                 .Where(m => m.Status == 1);
 
@@ -195,7 +196,7 @@ namespace Movie.Repository
                 LinkFilmUrl = m.LinkFilmUrl,
                 DirectorId = m.DirectorId,
                 Director = m.Director?.NameDir,
-                Actors = m.MovieActors.Select(ma => new RequestActorDTO
+                Actors = m.MovieActor.Select(ma => new RequestActorDTO
                 {
                     ActorId = ma.Actors.ActorId,
                     NameAct = ma.Actors.NameAct
@@ -207,6 +208,7 @@ namespace Movie.Repository
                 }).ToList()
             }).ToList();
         }
+
         //Xoá mềm 
         public async Task<RequestMovieDTO?> SoftDeleteAsync(int id)
         {
@@ -219,13 +221,13 @@ namespace Movie.Repository
             return null;
         }
 
-
+        //Lấy movie qua Id
         public async Task<RequestMovieDTO> GetMovieByIdAsync(int id)
         {
 
             var movie = await _context.Movies
                 .Include(m => m.Director)
-                .Include(m => m.MovieActors)
+                .Include(m => m.MovieActor)
                     .ThenInclude(ma => ma.Actors)
                 .Include(m => m.MovieCategories)
                     .ThenInclude(mc => mc.Categories)
@@ -245,7 +247,7 @@ namespace Movie.Repository
                         CategoryName = mc.Categories.CategoryName
                     }).ToList(),
                 Description = movie.Description,
-                Actors = movie.MovieActors.Select(ma => new RequestActorDTO
+                Actors = movie.MovieActor.Select(ma => new RequestActorDTO
                 {
                     ActorId = ma.ActorId,
                     NameAct = ma.Actors.NameAct
@@ -254,6 +256,49 @@ namespace Movie.Repository
             };
 
             return movieDTO;
+        }
+
+        //List Movie hot
+        public async Task<IEnumerable<RequestMovieDTO>> GetMovieHotAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID)
+        {
+            var query = _context.Movies
+                .Include(m => m.Director)
+                .Include(m => m.MovieActor).ThenInclude(ma => ma.Actors)
+                .Include(m => m.MovieCategories).ThenInclude(mc => mc.Categories)
+                .Where(m => m.IsHot == true)
+                .Where(m => m.Status == 1);
+
+            //  Filtering
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(m => m.Title.Contains(search));
+            }
+
+            if (categoryID.HasValue)
+            {
+                query = query.Where(m => m.MovieCategories.Any(mc => mc.CategoryId == categoryID.Value));
+            }
+
+            //  Sorting
+            query = sortBy switch
+            {
+                "Title" => query.OrderBy(m => m.Title),
+                "Rating" => query.OrderByDescending(m => m.Rating),
+                _ => query.OrderBy(m => m.Title)
+            };
+
+            var Movie = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Movie.Select(m => new RequestMovieDTO
+            {
+                MovieId = m.MovieId,
+                Title = m.Title,
+                AvatarUrl = m.AvatarUrl,
+
+            }).ToList();
         }
     }
 }

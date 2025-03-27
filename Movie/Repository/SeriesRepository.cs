@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 using Movie.RequestDTO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,10 +12,12 @@ namespace Movie.Repository
     public class SeriesRepository : ISeriesRepository
     {
         private readonly movieDB _context;
+        private readonly IWebHostEnvironment _environment;
         private readonly string _assetsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
 
-        public SeriesRepository(movieDB context)
+        public SeriesRepository(movieDB context, IWebHostEnvironment environment)
         {
+            _environment = environment;
             _context = context;
         }
 
@@ -89,7 +92,6 @@ namespace Movie.Repository
             );
         }
 
-
         // Lấy thông tin series theo ID
         public async Task<RequestSeriesDTO?> GetSeriesByIdAsync(int id)
         {
@@ -112,39 +114,37 @@ namespace Movie.Repository
             };
         }
 
-        public async Task<string> SaveFile(IFormFile file, string subFolder)
+        // Lưu ảnh vào thư mục chỉ định
+        private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            if (file == null || file.Length == 0)
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            if (file == null) return null;
+
+            var folderPath = Path.Combine(_environment.WebRootPath, "Movies", folderName);
+            if (!Directory.Exists(folderPath))
             {
-                return null; // No file to save
+                Directory.CreateDirectory(folderPath);
             }
 
-            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", subFolder);
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(folderPath, fileName);
 
-            // Ensure the directory exists
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            // Generate a unique file name
-            string fileName = Path.GetFileName(file.FileName);
-            string filePath = Path.Combine(directoryPath, fileName);
-
-            // Save the file
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            return filePath; // Return the saved file path
+            // Lưu đường dẫn  
+            return $" C:/Users/Admin/source/repos/Movie/Movie/Assets/{folderName}/{fileName}";
         }
 
 
-
         // Thêm một bộ series mới
-        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, string posterFilePath, string avatarFilePath)
+        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile avatarUrlFile)
         {
+            var posterUrl = await SaveFileAsync(posterFile, "Posters");
+            var avatarUrl = await SaveFileAsync(avatarUrlFile, "AvatarUrls");
+
             var series = new Series
             {
                 Title = seriesDTO.Title,
@@ -153,8 +153,8 @@ namespace Movie.Repository
                 Rating = seriesDTO.Rating,
                 IsHot = seriesDTO.IsHot,
                 YearReleased = seriesDTO.YearReleased,
-                PosterUrl = posterFilePath,  // Lưu đường dẫn poster
-                AvatarUrl = avatarFilePath,  // Lưu đường dẫn avatar
+                PosterUrl = posterUrl,  // Lưu đường dẫn poster
+                AvatarUrl = avatarUrl,  // Lưu đường dẫn avatar
                 Status = seriesDTO.Status,
                 Nation = seriesDTO.Nation,
                 Season = seriesDTO.Season
@@ -163,21 +163,46 @@ namespace Movie.Repository
             _context.Series.Add(series);
             await _context.SaveChangesAsync();
 
-            return new RequestSeriesDTO
+            seriesDTO.PosterUrl = posterUrl;
+            seriesDTO.AvatarUrl = avatarUrl;
+
+            //Xử lý thêm Category vào MovieCategory
+            if (seriesDTO.CategoriesIds != null && seriesDTO.CategoriesIds.Any())
             {
-                SeriesId = series.SeriesId,
-                Title = series.Title,
-                Description = series.Description,
-                DirectorId = series.DirectorId,
-                Rating = series.Rating,
-                IsHot = series.IsHot ?? false,
-                YearReleased = series.YearReleased,
-                PosterUrl = series.PosterUrl,
-                AvatarUrl = series.AvatarUrl,
-                Status = series.Status ?? 0,
-                Nation = seriesDTO.Nation,
-                Season = series.Season
-            };
+                string[] CategoriesId = seriesDTO.CategoriesIds.Split(',');
+
+                foreach (var category in CategoriesId)
+                {
+                    _context.SeriesCategories.Add(new SeriesCategory
+                    {
+                        SeriesId = series.SeriesId,
+                        CategoriesId = Int32.Parse(category)
+                    });
+                }
+            }
+
+            //  Xử lý thêm Actor vào MovieActor
+            if (seriesDTO.ActorsIds != null && seriesDTO.ActorsIds.Any())
+            {
+                string[] ActorsId = seriesDTO.ActorsIds.Split(',');
+
+                foreach (var actor in ActorsId)
+                {
+                    _context.SeriesActors.Add(new SeriesActor
+                    {
+                        SeriesActorId = series.SeriesId,
+                        ActorsId = Int32.Parse(actor)
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            seriesDTO.PosterUrl = posterUrl;
+            seriesDTO.AvatarUrl = avatarUrl;
+
+            return seriesDTO;
+
         }
 
 

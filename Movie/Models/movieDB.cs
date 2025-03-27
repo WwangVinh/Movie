@@ -25,7 +25,7 @@ public partial class movieDB : DbContext
 
     public virtual DbSet<Movies> Movies { get; set; }
 
-    public virtual DbSet<MovieActor> MovieActors { get; set; }
+    public virtual DbSet<MovieActor> MovieActor { get; set; }
 
     public virtual DbSet<MovieCategory> MovieCategories { get; set; }
 
@@ -82,9 +82,9 @@ public partial class movieDB : DbContext
 
             entity.Property(e => e.MovieActorId).ValueGeneratedOnAdd();
 
-            entity.HasOne(d => d.Actors).WithMany(p => p.MovieActors).HasConstraintName("FK__MovieActo__Actor__5812160E");
+            entity.HasOne(d => d.Actors).WithMany(p => p.MovieActor).HasConstraintName("FK__MovieActo__Actor__5812160E");
 
-            entity.HasOne(d => d.Movie).WithMany(p => p.MovieActors).HasConstraintName("FK__MovieActo__Movie__571DF1D5");
+            entity.HasOne(d => d.Movie).WithMany(p => p.MovieActor).HasConstraintName("FK__MovieActo__Movie__571DF1D5");
         });
 
         modelBuilder.Entity<MovieCategory>(entity =>

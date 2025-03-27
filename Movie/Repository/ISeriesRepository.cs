@@ -52,10 +52,11 @@ namespace Movie.Repository
         Task<RequestSeriesDTO?> GetSeriesByIdAsync(int id);
 
         // Thêm một bộ series mới
-        Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, string posterFilePath, string avatarFilePath);
+        Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile);
 
         // Cập nhật thông tin của bộ series
         Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath);
+
         // Xóa một bộ series hoàn toàn khỏi cơ sở dữ liệu
         Task DeleteSeriesAsync(int id);
 
@@ -66,6 +67,6 @@ namespace Movie.Repository
         Task UpdateSeriesStatusAsync(int id, int status);
 
         // Thêm khai báo phương thức SaveFile
-        Task<string> SaveFile(IFormFile file, string subFolder);
+        //Task<string> SaveFile(IFormFile file, string subFolder);
     }
 }

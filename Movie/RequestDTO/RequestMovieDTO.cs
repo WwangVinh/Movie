@@ -15,9 +15,11 @@ public partial class RequestMovieDTO
     public string? Description { get; set; }
 
     public int? DirectorId { get; set; }
+
     public string? Nation { get; set; }
 
     public decimal? Rating { get; set; }
+
     public string? PosterUrl { get; set; }
 
     public string? AvatarUrl { get; set; }
@@ -28,12 +30,16 @@ public partial class RequestMovieDTO
 
     public bool? IsHot { get; set; }
 
-    public DateTime? YearReleased { get; set; }
+    public int? YearReleased { get; set; }
 
     public string? ActorIds { get; set; }
+
     public string? CategoryIds { get; set; }
+
     public int? Status { get; set; }
+
     public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+
     public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
 }
 public class ActorDTO

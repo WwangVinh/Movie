@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Movie.Models;
 
 [PrimaryKey("MovieId", "ActorId")]
-[Table("MovieActors")]
+[Table("MovieActor")]
 public partial class MovieActor
 {
     public int MovieActorId { get; set; }
@@ -21,10 +21,10 @@ public partial class MovieActor
     public int ActorId { get; set; }
 
     [ForeignKey("ActorId")]
-    [InverseProperty("MovieActors")]
+    [InverseProperty("MovieActor")]
     public virtual Actor Actors { get; set; } = null!;
 
     [ForeignKey("MovieId")]
-    [InverseProperty("MovieActors")]
+    [InverseProperty("MovieActor")]
     public virtual Movies Movie { get; set; } = null!;
 }

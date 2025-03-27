@@ -44,7 +44,7 @@ public partial class Series
 
     public bool? IsHot { get; set; }
 
-    public DateTime? YearReleased { get; set; }
+    public int? YearReleased { get; set; }
 
     [ForeignKey("DirectorId")]
     [InverseProperty("Series")]

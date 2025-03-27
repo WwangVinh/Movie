@@ -19,13 +19,13 @@ namespace Movie.Repository
         }
         public async Task AddAsync(MovieActor entity)
         {
-            await _context.MovieActors.AddAsync(entity);
+            await _context.MovieActor.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
         public async Task DeleteByMovieIdAsync(int MovieId)
         {
-            var actors = _context.MovieActors.Where(mc => mc.MovieId == MovieId);
-            _context.MovieActors.RemoveRange(actors);
+            var actors = _context.MovieActor.Where(mc => mc.MovieId == MovieId);
+            _context.MovieActor.RemoveRange(actors);
             await _context.SaveChangesAsync();
         }
     }

@@ -126,7 +126,7 @@ namespace Movie.Repository
             };
         }
 
-        public async Task<RequestUserDTO> GetUserByUsernameAsync(string username)
+        public async Task<RequestUserDTO> GetUserByUserNameAsync(string username)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user == null)

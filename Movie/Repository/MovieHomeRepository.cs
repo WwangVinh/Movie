@@ -80,7 +80,7 @@ namespace Movie.Repository
         public async Task<IEnumerable<RequestMovieDTO>> GetActionMovieAsync()
         {
             var query = _context.Movies
-                .Where(m => m.Status == 1 && m.MovieCategories.Any(mc => mc.Categories.CategoryName == "Action"))
+                .Where(m => m.Status == 1 && m.MovieCategories.Any(mc => mc.Categories.CategoryName == "Hành động"))
                 .OrderByDescending(m => m.YearReleased)
                 .Take(10);
 

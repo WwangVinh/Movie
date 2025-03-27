@@ -7,7 +7,7 @@ namespace Movie.ResponseDTO
 
         public string NameSeries { get; set; } = string.Empty;
         public string SeriesLink { get; set; } = string.Empty;
-        public DateTime? YearReleased { get; set; }
+        public int? YearReleased { get; set; }
         public string National { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

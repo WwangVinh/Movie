@@ -1,11 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-
 using Movie.Repository;
 using Movie.RequestDTO;
 using Movie.ResponseDTO;
 
-namespace Movie.Controllers
+namespace Movie.ControllerUser
 {
     [Route("api/[controller]")]
     [ApiController]

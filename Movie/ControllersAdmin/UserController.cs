@@ -38,7 +38,7 @@ namespace Movie.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(string username, string newPassword)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(username);
+            var user = await _userRepository.GetUserByUserNameAsync(username);
             if (user == null)
             {
                 return NotFound(new { Message = "Người dùng hong tồn tại." });

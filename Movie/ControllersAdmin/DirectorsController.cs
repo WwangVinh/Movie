@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Movie.Models;
 
-namespace Movie.Controllers
+namespace Movie.ControllersAdmin
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -21,7 +21,7 @@ namespace Movie.Controllers
         }
 
         // GET: api/Actors
-        [HttpGet]
+        [HttpGet("List-Actors")]
         public async Task<ActionResult<IEnumerable<RequestDirectorDTO>>> GetAllDirectorsAsync(
             string? search = null,
             string sortBy = "DirectorId",
