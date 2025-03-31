@@ -7,7 +7,7 @@ public partial class RequestDirectorDTO
     public int DirectorID { get; set; }
 
 
-    public string NameDir { get; set; } = null!; 
+    public string NameDir { get; set; } = null!;
 
     public string? Description { get; set; }
 

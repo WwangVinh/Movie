@@ -23,8 +23,8 @@ namespace Movie.Models
 
         public int Status { get; set; }  // 1: active, 0: deactivated
 
-        public DateTime? DeletedAt { get; set; } // Nếu tài khoản bị xóa, bạn có thể lưu thời gian xóa
+        //public DateTime? DeletedAt { get; set; } // Nếu tài khoản bị xóa, bạn có thể lưu thời gian xóa
 
-        public DateTime? RestoredAt { get; set; } // Nếu tài khoản được khôi phục, bạn có thể lưu thời gian khôi phục
+        //public DateTime? RestoredAt { get; set; } // Nếu tài khoản được khôi phục, bạn có thể lưu thời gian khôi phục
     }
 }

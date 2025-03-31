@@ -1,7 +1,4 @@
 ﻿using Movie.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 namespace Movie.RequestDTO;
 
 public partial class RequestActorDTO
@@ -18,8 +15,6 @@ public partial class RequestActorDTO
     public string? Professional { get; set; }
 
     public string? AvatarUrl { get; set; }
-
-    public int Status { get; set; }
 
     public virtual ICollection<RequestMovieDTO> Movie { get; set; } = new List<RequestMovieDTO>();
 
