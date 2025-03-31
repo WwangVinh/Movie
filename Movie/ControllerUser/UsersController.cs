@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Scripting;
 using Movie.Models;
 using Movie.Repository;
 using Movie.ResponseDTO;
 
 
-namespace Movie.ControllerWeb
+namespace Movie.ControllerUser
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -19,7 +18,7 @@ namespace Movie.ControllerWeb
         }
 
         // POST: api/User/SignUp
-        [HttpPost("Sign-Up")]
+        [HttpPost("SignUp-User")]
         public async Task<ActionResult<RequestUserDTO>> CreateUser(RequestUserDTO requestUser)
         {
             try
@@ -45,19 +44,27 @@ namespace Movie.ControllerWeb
         }
 
         // POST: api/User/Login
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO userDTO)
+        [HttpPost("login-User")]
+
+        public async Task<IActionResult> LoginUser(RequestUserDTO requestUser)
+
         {
-            if (userDTO == null)
-                return BadRequest("Dữ liệu người dùng không hợp lệ");
 
-            var user = await _userRepository.GetUserByUserNameAsync(userDTO.UserName);
+            var token = await _userRepository.LoginUserAsync(requestUser.Email, requestUser.Password);
 
-            if (user == null || user.Password != userDTO.Password)
-                return Unauthorized("Tên người dùng hoặc mật khẩu không hợp lệ");
+            if (token == null)
 
-            return Ok("Đăng nhập thành công");
+            {
+
+                return Unauthorized(new { Messgae = "Tên tài khoản hoặc mật khẩu không tồn tại" });
+
+            }
+
+            return Ok(new { Message = "Đăng nhập thành công" });
+
         }
+
+
     }
 
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Movie.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Movie.Repository;
 
 namespace Movie.ControllerUser
@@ -21,7 +14,7 @@ namespace Movie.ControllerUser
             _directorRepository = directorRepository;
         }
 
-        [HttpGet("{id}..")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetDirectorById(int id)
         {
             var director = await _directorRepository.GetDirectorByIdAsync(id);

@@ -1,8 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Movie.Repository;
-using Movie.RequestDTO;
-using Movie.ResponseDTO;
+
 
 namespace Movie.ControllerUser
 {
@@ -43,7 +41,7 @@ namespace Movie.ControllerUser
         [HttpGet("series")]
         public async Task<IActionResult> GetSeriesMovie()
         {
-            var Movie = await _movieRepository.GetSeriesMovieAsync();
+            var Movie = await _movieRepository.GetSeriesAsync();
             return Ok(Movie);
         }
 
