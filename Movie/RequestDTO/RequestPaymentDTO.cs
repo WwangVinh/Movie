@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Movie.RequestDTO;
+﻿namespace Movie.RequestDTO;
 
 public partial class RequestPaymentDTO
 {

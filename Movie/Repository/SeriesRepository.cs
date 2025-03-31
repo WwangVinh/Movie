@@ -27,7 +27,7 @@ namespace Movie.Repository
             string sortBy = "Title",          // Sắp xếp theo tên series mặc định
             string sortDirection = "asc",     // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                    // Số trang
-            int pageSize = 5                 // Số lượng series trên mỗi trang
+            int pageSize = 10                 // Số lượng series trên mỗi trang
         )
         {
             var query = _context.Series.AsQueryable();
@@ -78,7 +78,6 @@ namespace Movie.Repository
                                     AvatarUrl = s.AvatarUrl,
                                     Status = s.Status ?? 0, // Xử lý nullable
                                     Season = s.Season,
-                                    LinkFilmUrl = s.LinkFilmUrl,  // Thêm LinkFilmUrl
                                     Nation = s.Nation  // Thêm Nation
                                 })
                                 .ToListAsync();
@@ -93,7 +92,7 @@ namespace Movie.Repository
         }
 
         // Lấy thông tin series theo ID
-        public async Task<RequestSeriesDTO?> GetSeriesByIdAsync(int id)
+        public async Task<RequestSeriesDTO?> AdminGetSeriesByIdAsync(int id)
         {
             var series = await _context.Series.FindAsync(id);
             if (series == null) return null;
@@ -173,10 +172,10 @@ namespace Movie.Repository
 
                 foreach (var category in CategoriesId)
                 {
-                    _context.SeriesCategories.Add(new SeriesCategory
+                    _context.SeriesCategories.Add(new SeriesCategories
                     {
                         SeriesId = series.SeriesId,
-                        CategoriesId = Int32.Parse(category)
+                        CategoryId = Int32.Parse(category)
                     });
                 }
             }
@@ -188,10 +187,10 @@ namespace Movie.Repository
 
                 foreach (var actor in ActorsId)
                 {
-                    _context.SeriesActors.Add(new SeriesActor
+                    _context.SeriesActors.Add(new SeriesActors
                     {
                         SeriesActorId = series.SeriesId,
-                        ActorsId = Int32.Parse(actor)
+                        ActorId = Int32.Parse(actor)
                     });
                 }
             }
@@ -202,12 +201,7 @@ namespace Movie.Repository
             seriesDTO.AvatarUrl = avatarUrl;
 
             return seriesDTO;
-
         }
-
-
-
-
 
         // Cập nhật thông tin của bộ series
         public async Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath)
@@ -243,7 +237,7 @@ namespace Movie.Repository
             }
 
             // Cập nhật các trường khác nếu cần thiết, ví dụ: LinkFilmUrl, Nation
-            existingSeries.LinkFilmUrl = seriesDTO.LinkFilmUrl;
+
             existingSeries.Nation = seriesDTO.Nation;
 
             // Lưu thay đổi vào cơ sở dữ liệu
@@ -264,7 +258,7 @@ namespace Movie.Repository
                 PosterUrl = existingSeries.PosterUrl,
                 AvatarUrl = existingSeries.AvatarUrl,
                 Status = existingSeries.Status ?? 0,  // Ensure nullable fields are handled
-                LinkFilmUrl = existingSeries.LinkFilmUrl,
+
                 Nation = existingSeries.Nation
             };
         }
@@ -307,5 +301,91 @@ namespace Movie.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<RequestSeriesDTO> GetSeriesByIdAsync(int id)
+        {
+
+            var series = await _context.Series
+            .Include(s => s.SeriesActors)
+                .ThenInclude(sa => sa.Actors)
+            .Include(s => s.SeriesCategories)
+                .ThenInclude(sc => sc.Categories)
+            .Include(s => s.Director)
+            .FirstOrDefaultAsync(s => s.SeriesId == id);
+
+            if (series == null) return null;
+
+            var seriesDTO = new RequestSeriesDTO
+            {
+                Title = series.Title,
+                YearReleased = series.YearReleased,
+                Nation = series.Nation ?? string.Empty,
+                Categories = series.SeriesCategories.Select(sa => new RequestCategoryDTO
+                {
+                    CategoryId = sa.Categories.CategoryId,
+                    CategoryName = sa.Categories.CategoryName
+                }).ToList(),
+
+                Description = series.Description ?? string.Empty,
+                Episode = await _context.Episodes
+                    .Where(e => e.SeriesId == series.SeriesId)
+                    .Select(e => new RequestEpisodeDTO
+                    {
+                        EpisodeNumber = e.EpisodeNumber,
+                        Title = e.Title ?? string.Empty,
+                        LinkFilmUrl = e.LinkFilmUrl ?? string.Empty
+                    }).ToListAsync(),
+                TotalEpisode = series.Status ?? 0,
+                Actors = series.SeriesActors.Select(sa => new RequestActorDTO
+                {
+                    ActorId = sa.ActorId,
+                    NameAct = sa.Actors.NameAct
+                }).ToList(),
+                Director = series.Director?.NameDir ?? string.Empty
+            };
+
+            return seriesDTO;
+        }
+
+        public async Task<IEnumerable<RequestSeriesDTO>> GetSeriesAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID)
+        {
+            var query = _context.Series
+                .Where(s => s.Status == 1);
+
+            // Filtering
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(s => s.Title.Contains(search));
+            }
+
+            if (categoryID.HasValue)
+            {
+                query = query.Where(s => s.SeriesCategories.Any(sc => sc.CategoryId == categoryID.Value));
+            }
+
+            // Sorting
+            query = sortBy switch
+            {
+                "Title" => query.OrderBy(s => s.Title),
+                "Rating" => query.OrderByDescending(s => s.Rating),
+                _ => query.OrderBy(s => s.Title)
+            };
+
+            var seriesList = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return seriesList.Select(s => new RequestSeriesDTO
+            {
+                SeriesId = s.SeriesId,
+                Title = s.Title,
+                PosterUrl = s.PosterUrl,
+                AvatarUrl = s.AvatarUrl,
+
+
+            }).ToList();
+        }
+
     }
 }

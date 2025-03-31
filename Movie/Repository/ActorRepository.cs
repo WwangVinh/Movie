@@ -25,7 +25,7 @@ namespace Movie.Repository
             string sortBy = "ActorId",      // Sắp xếp theo tên actor mặc định
             string sortDirection = "asc",   // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                   // Số trang mặc định là trang 1
-            int pageSize = 5                // Số lượng actor trên mỗi trang
+            int pageSize = 10                // Số lượng actor trên mỗi trang
         )
         {
             var query = _context.Actors.AsQueryable();
@@ -75,7 +75,7 @@ namespace Movie.Repository
         }
 
         // Lấy actor theo ID
-        public async Task<RequestActorDTO?> GetActorByIdAsync(int id)
+        public async Task<RequestActorDTO?> AdminGetActorByIdAsync(int id)
         {
             var actor = await _context.Actors.FindAsync(id);
             if (actor == null) return null;
@@ -90,7 +90,6 @@ namespace Movie.Repository
                 AvatarUrl = actor.AvatarUrl
             };
         }
-
 
 
         // Cập nhật thông tin actor
@@ -195,6 +194,44 @@ namespace Movie.Repository
 
             return filePath;  // Trả về đường dẫn tệp đã lưu
         }
+
+        // Lấy thông tin diễn viên và các phim liên quan
+        public async Task<ActorDetailDTO?> GetActorByIdAsync(int id)
+        {
+            var actor = await _context.Actors
+                .Include(a => a.MovieActor)
+                    .ThenInclude(ma => ma.Movie)
+                .Include(a => a.SeriesActors)
+                    .ThenInclude(ma => ma.Series)
+                .FirstOrDefaultAsync(a => a.ActorId == id);
+
+            if (actor == null) return null;
+
+            var actorDetail = new ActorDetailDTO
+            {
+                Actor = new RequestActorDTO
+                {
+                    ActorId = actor.ActorId,
+                    NameAct = actor.NameAct,
+                    Nationality = actor.Nationality
+                },
+                Movie = actor.MovieActor.Select(ma => new ActorMovieDTO
+                {
+                    MovieId = ma.Movie.MovieId,
+                    AvatarUrl = ma.Movie.AvatarUrl,
+                    MovieName = ma.Movie.Title
+                }).ToList(),
+                Series = actor.SeriesActors.Select(ma => new ActorMovieDTO
+                {
+                    MovieId = ma.Series.SeriesId,
+                    AvatarUrl = ma.Series.AvatarUrl,
+                    MovieName = ma.Series.Title
+                }).ToList()
+            };
+
+            return actorDetail;
+        }
+
 
     }
 }

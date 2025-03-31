@@ -43,16 +43,22 @@ namespace Movie.RequestDTO
 
         public string? CategoriesIds { get; set; } // Có thể là chuỗi ID của các thể loại
 
-        public DateTime? DeletedAt { get; set; } // Lưu thời gian xóa nếu cần
+        //public DateTime? DeletedAt { get; set; } // Lưu thời gian xóa nếu cần
 
-        public DateTime? RestoredAt { get; set; } // Lưu thời gian khôi phục nếu cần
+        //public DateTime? RestoredAt { get; set; } // Lưu thời gian khôi phục nếu cần
 
         // Các thuộc tính nhận tệp từ form
         [Required(ErrorMessage = "Poster file is required")]
         public IFormFile PosterFile { get; set; }  // Tệp ảnh Poster
 
         [Required(ErrorMessage = "Avatar file is required")]
-        public IFormFile AvatarFile { get; set; }  // Tệp ảnh Avatar 
+        public IFormFile AvatarFile { get; set; }  // Tệp ảnh Avatar
+        public string? Director { get; set; } = string.Empty!;
+        public int? TotalEpisode { get; set; }
+        public virtual ICollection<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
+        public virtual ICollection<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
+        public virtual ICollection<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+
     }
 }
 public class ActorDTO

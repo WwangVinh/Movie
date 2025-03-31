@@ -8,7 +8,7 @@ public interface IDirectorsRepository
         string sortBy = "NameDir",
         string sortDirection = "asc",
         int page = 1,
-        int pageSize = 5
+        int pageSize = 10
     );
     Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO);
     Task<RequestDirectorDTO> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO);

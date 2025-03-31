@@ -17,8 +17,8 @@ public partial class Categories
     public string CategoryName { get; set; } = null!;
 
     [InverseProperty("Categories")]
-    public virtual ICollection<MovieCategory> MovieCategories { get; set; } = new List<MovieCategory>();
+    public virtual ICollection<MovieCategories> MovieCategories { get; set; } = new List<MovieCategories>();
 
     [InverseProperty("Categories")]
-    public virtual ICollection<SeriesCategory> SeriesCategories { get; set; } = new List<SeriesCategory>();
+    public virtual ICollection<SeriesCategories> SeriesCategories { get; set; } = new List<SeriesCategories>();
 }

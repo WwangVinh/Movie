@@ -26,7 +26,7 @@ namespace Movie.Repository
             string sortBy = "id", // Trường sắp xếp (mặc định theo id)
             string sortDirection = "asc", // Hướng phân loại (asc/desc)
             int page = 1, // Số trang (mặc định là trang 1)
-            int pageSize = 5 // Số mục trên mỗi trang (mặc định là 5)
+            int pageSize = 10 // Số mục trên mỗi trang (mặc định là 5)
         )
         {
             // Kiểm tra nếu page hoặc pageSize nhỏ hơn 1, đặt giá trị mặc định
