@@ -59,7 +59,7 @@ namespace Movie.Repository
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<RequestMovieDTO>> GetSeriesMovieAsync()
+        public async Task<IEnumerable<RequestMovieDTO>> GetSeriesAsync()
         {
             var query = _context.Series
                 .Where(s => s.Status == 1)
@@ -80,7 +80,7 @@ namespace Movie.Repository
         public async Task<IEnumerable<RequestMovieDTO>> GetActionMovieAsync()
         {
             var query = _context.Movies
-                .Where(m => m.Status == 1 && m.MovieCategories.Any(mc => mc.Categories.CategoryName == "Hành động"))
+                .Where(m => m.Status == 1 && m.MovieCategories.Any(mc => mc.Categories.CategoryName == "Action"))
                 .OrderByDescending(m => m.YearReleased)
                 .Take(10);
 

@@ -5,14 +5,14 @@ using Movie.Models;
 
 namespace Movie.Repository
 {
-    public class MovieCategoryRepository : IMovieCategoryRepository<MovieCategory>
+    public class MovieCategoryRepository : IMovieCategoryRepository<MovieCategories>
     {
         private readonly movieDB _context;
         public MovieCategoryRepository(movieDB context)
         {
             _context = context;
         }
-        public async Task AddAsync(MovieCategory entity)
+        public async Task AddAsync(MovieCategories entity)
         {
             await _context.MovieCategories.AddAsync(entity);
             await _context.SaveChangesAsync();

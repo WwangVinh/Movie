@@ -11,7 +11,7 @@ namespace Movie.Repository
             string sortBy = "CategoryId",
             string sortDirection = "asc",
             int page = 1,
-            int pageSize = 5);
+            int pageSize = 10);
 
         Task<RequestCategoryDTO> GetCategoryByIdAsync(int id);
 
