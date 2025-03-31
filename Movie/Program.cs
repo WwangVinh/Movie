@@ -66,7 +66,7 @@ builder.Services.AddScoped<IDirectorsRepository, DirectorRepository>();
 builder.Services.AddScoped<ISeriesRepository, SeriesRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
+builder.Services.AddScoped<ContentRepository>();
 
 var app = builder.Build();
 

@@ -19,6 +19,8 @@ public partial class RequestActorDTO
 
     public string? AvatarUrl { get; set; }
 
+    public int Status { get; set; }
+
     public virtual ICollection<RequestMovieDTO> Movie { get; set; } = new List<RequestMovieDTO>();
 
     public virtual ICollection<Series> Series { get; set; } = new List<Series>();

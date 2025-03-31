@@ -1,5 +1,4 @@
-﻿using Movie.Models;
-using Movie.RequestDTO;
+﻿using Movie.RequestDTO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -45,11 +44,9 @@ namespace Movie.Repository
             string sortBy = "Title",       // Sắp xếp theo tên series mặc định
             string sortDirection = "asc",  // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                  // Số trang mặc định là trang 1
-            int pageSize = 5               // Số lượng series trên mỗi trang
+            int pageSize = 10               // Số lượng series trên mỗi trang
         );
 
-        // Lấy thông tin series theo ID
-        Task<RequestSeriesDTO?> GetSeriesByIdAsync(int id);
 
         // Thêm một bộ series mới
         Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile);
@@ -68,5 +65,8 @@ namespace Movie.Repository
 
         // Thêm khai báo phương thức SaveFile
         //Task<string> SaveFile(IFormFile file, string subFolder);
+
+        Task<RequestSeriesDTO> GetSeriesByIdAsync(int id);
+        Task<IEnumerable<RequestSeriesDTO>> GetSeriesAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID);
     }
 }

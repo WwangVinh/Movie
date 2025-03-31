@@ -107,7 +107,7 @@ namespace Movie.Repository
                 }
             }
 
-            //  Xử lý thêm Actor vào MovieActor
+            //  Xử lý thêm Actor vào MovieActors
             if (movieDTO.ActorIds != null && movieDTO.ActorIds.Any())
             {
                 string[] actorId = movieDTO.ActorIds.Split(',');

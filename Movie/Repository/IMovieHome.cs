@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Movie.RequestDTO;
-using Movie.ResponseDTO;
+
 
 namespace Movie.Repository
 {
@@ -11,8 +11,7 @@ namespace Movie.Repository
         Task<IEnumerable<string>> GetPostersAsync();
         Task<IEnumerable<RequestMovieDTO>> GetNewMovieAsync();
         Task<IEnumerable<RequestMovieDTO>> GetHotMovieAsync();
-        Task<IEnumerable<RequestMovieDTO>> GetSeriesMovieAsync();
+        Task<IEnumerable<RequestMovieDTO>> GetSeriesAsync();
         Task<IEnumerable<RequestMovieDTO>> GetActionMovieAsync();
-
     }
 }
