@@ -9,7 +9,7 @@ namespace Movie.Models;
 public partial class Director
 {
     [Key]
-    [Column("DirectorID")]
+    [Column("DirectorId")]
     public int DirectorId { get; set; }
 
     [StringLength(225)]

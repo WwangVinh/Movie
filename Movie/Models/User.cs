@@ -22,7 +22,7 @@ public partial class User
     [StringLength(255)]
     public string Password { get; set; } = null!;
 
-    [Column(TypeName = "datetime")]
+    [Column("CreatedDate")]
     public DateTime? CreatedDate { get; set; }
 
     public int Status { get; set; }
