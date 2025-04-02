@@ -19,10 +19,10 @@ namespace Movie.RequestDTO
         [StringLength(255)]
         public string? Professional { get; set; }
 
-        public string? PosterUrl { get; set; }
 
-        [StringLength(255)]
-        public string? AvatarUrl { get; set; }
+        public string PosterUrl { get; set; }
+
+        public string AvatarUrl { get; set; }
 
         public int? Status { get; set; } // 1: active, 0: deactivated
 

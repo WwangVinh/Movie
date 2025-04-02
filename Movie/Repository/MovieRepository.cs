@@ -58,7 +58,7 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\phlinh\\Documents\\C#\\Movie\\";
+            _environment.WebRootPath = "C:\\Users\\Admin\\OneDrive\\Tài liệu\\movieDB\\Movies\\Assets\\";
             if (file == null) return null;
 
             var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
@@ -92,7 +92,7 @@ namespace Movie.Repository
                 Rating = movieDTO.Rating,
                 PosterUrl = posterUrl,
                 AvatarUrl = AvatarUrl,
-                LinkFilmUrl = movieDTO.LinkFilmUrl,              
+                LinkFilmUrl = movieDTO.LinkFilmUrl,
                 DirectorId = movieDTO.DirectorId,
                 IsHot = movieDTO.IsHot,
                 YearReleased = movieDTO.YearReleased,
@@ -105,8 +105,8 @@ namespace Movie.Repository
             movieDTO.PosterUrl = posterUrl;
             movieDTO.AvatarUrl = AvatarUrl;
 
-           
-            
+
+
             //Xử lý thêm Category vào MovieCategory
             if (movieDTO.CategoryIds != null && movieDTO.CategoryIds.Any())
             {
@@ -144,7 +144,7 @@ namespace Movie.Repository
 
             return movieDTO;
         }
-        
+
 
 
 
@@ -214,7 +214,7 @@ namespace Movie.Repository
             }
             return null;
         }
-        
+
 
         public async Task<RequestMovieDTO> GetMovieByIdAsync(int id)
         {

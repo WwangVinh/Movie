@@ -10,11 +10,15 @@
 
         public int DirectorId { get; set; }
 
-        public decimal Rating { get; set; }
+        public decimal? Rating { get; set; }
 
         public string Nation { get; set; }
 
         public bool IsHot { get; set; }
+
+        public string? CategoryIds { get; set; }  // Có thể nullable nếu không cần giá trị cho trường này
+
+        public string ActorIds { get; set; }  // Cũng vậy
 
         public int YearReleased { get; set; }
 

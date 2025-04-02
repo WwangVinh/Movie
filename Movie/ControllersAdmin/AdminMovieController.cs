@@ -44,7 +44,15 @@ namespace Movie.ControllersAdmin
             return Ok(movie);
         }
 
-        [HttpPost("AddFilm")]
+        //[HttpPost("AddFilm")]
+        //public async Task<IActionResult> AddMovie([FromForm] RequestMovieDTO movieDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
+        //{
+        //    var result = await _movieRepository.AddAsync(movieDTO, posterFile, AvatarUrlFile);
+        //    if (result == null) return BadRequest("Failed to add movie");
+        //    return Ok(result);
+        //}
+
+        [HttpPost("AddMovie")]
         public async Task<IActionResult> AddMovie([FromForm] RequestMovieDTO movieDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
         {
             var result = await _movieRepository.AddAsync(movieDTO, posterFile, AvatarUrlFile);

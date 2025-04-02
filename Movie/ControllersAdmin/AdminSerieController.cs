@@ -21,14 +21,45 @@ namespace Movie.ControllersAdmin
         }
 
 
-        [HttpPost("Add-Series")]
-        public async Task<ActionResult<RequestSeriesDTO>> AddSeries([FromForm] RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
-        {
-            var result = await _seriesRepository.AddSeriesAsync(seriesDTO, posterFile, AvatarUrlFile);
-            if (result == null) return BadRequest("Failed to add Series");
-            return Ok(result);
-        }
+        //[HttpPost("Add-Series")]
+        //public async Task<ActionResult<RequestSeriesDTO>> AddSeries([FromForm] RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
+        //{
+        //    var result = await _seriesRepository.AddSeriesAsync(seriesDTO, posterFile, AvatarUrlFile);
+        //    if (result == null) return BadRequest("Failed to add Series");
+        //    return Ok(result);
+        //}
 
+        //[HttpPost("AddSeries")]
+        //public async Task<IActionResult> AddSeries([FromForm] RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
+        //{
+        //    var result = await _seriesRepository.AddSeriesAsync(seriesDTO, posterFile, AvatarUrlFile);
+        //    if (result == null) return BadRequest("Failed to add series");
+        //    return Ok(result);
+        //}
+
+        [HttpPost("AddSeries")]
+        public async Task<IActionResult> AddSeries([FromForm] RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
+        {
+            try
+            {
+                if (posterFile == null || posterFile.Length == 0)
+                {
+                    return BadRequest(new { errors = new { posterFile = new[] { "Poster file is required" } } });
+                }
+
+                var result = await _seriesRepository.AddSeriesAsync(seriesDTO, posterFile, AvatarUrlFile);
+                if (result == null) return BadRequest("Failed to add series");
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { errors = new { message = ex.Message } });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { errors = new { message = "An error occurred while adding the series.", details = ex.Message } });
+            }
+        }
 
 
         // GET: api/Series

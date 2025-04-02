@@ -10,7 +10,7 @@ namespace Movie.Models;
 [Table("SeriesActors")]
 public partial class SeriesActors
 {
-  
+
     [Key]
     [Column("SeriesID")]
     public int SeriesId { get; set; }

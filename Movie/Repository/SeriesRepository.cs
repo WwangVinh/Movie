@@ -27,7 +27,7 @@ namespace Movie.Repository
             string sortBy = "Title",          // Sắp xếp theo tên series mặc định
             string sortDirection = "asc",     // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                    // Số trang
-            int pageSize = 10                 // Số lượng series trên mỗi trang
+            int pageSize = 5                 // Số lượng series trên mỗi trang
         )
         {
             var query = _context.Series.AsQueryable();
@@ -119,7 +119,7 @@ namespace Movie.Repository
             _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
             if (file == null) return null;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "Movies", folderName);
+            var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -133,8 +133,7 @@ namespace Movie.Repository
                 await file.CopyToAsync(stream);
             }
 
-            // Lưu đường dẫn  
-            return $" C:/Users/Admin/source/repos/Movie/Movie/Assets/{folderName}/{fileName}";
+            return $"https://source.cmcglobal.com.vn/g1/du1.33/be-base/-/raw/main/Assets/{folderName}/{fileName}";
         }
 
 
