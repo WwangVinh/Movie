@@ -28,6 +28,12 @@ namespace Movie.ControllersAdmin
             )
         {
             var Movie = await _movieRepository.GetMovieAsync(pageNumber, pageSize, sortBy, search, categoryID);
+
+            if (Movie == null || !Movie.Any()) // Now this works because PaginatedList implements IEnumerable
+            {
+                return NotFound(new { Message = "Không tìm thấy Movie nào." });
+            }
+
             return Ok(Movie);
         }
 

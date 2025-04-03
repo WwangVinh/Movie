@@ -65,23 +65,26 @@ namespace Movie.ControllersAdmin
         // GET: api/Series
         [HttpGet]
         public async Task<ActionResult<PaginatedList<RequestSeriesDTO>>> GetSeries(
-        string? search = null,
-        string sortBy = "Title",          // Sắp xếp theo tên series mặc định
-        string sortDirection = "asc",     // Hướng sắp xếp mặc định là tăng dần
-        int page = 1,                     // Số trang
-        int pageSize = 10                 // Số lượng series trên mỗi trang
-)
+            string? search = null,
+            string sortBy = "Title",          // Sắp xếp theo tên series mặc định
+            string sortDirection = "asc",     // Hướng sắp xếp mặc định là tăng dần
+            int page = 1,                     // Số trang
+            int pageSize = 10,                // Số lượng series trên mỗi trang
+            int? categoryID = null            // Thêm tham số cho việc lọc theo category
+        )
         {
-            // Get series from repository
-            var series = await _seriesRepository.GetSeriesAsync(search, sortBy, sortDirection, page, pageSize);
+            // Lấy series từ repository với các tham số bao gồm tìm kiếm, sắp xếp và lọc theo category
+            var series = await _seriesRepository.GetSeriesAsync(page, pageSize, sortBy, search, categoryID);
 
-            if (series == null || !series.Any()) // Now this works because PaginatedList implements IEnumerable
+            if (series == null || !series.Any()) // Kiểm tra nếu không có series nào
             {
                 return NotFound(new { Message = "Không tìm thấy series nào." });
             }
 
-            return Ok(series); // Return the PaginatedList with series data
+            // Trả về danh sách series đã phân trang
+            return Ok(series);
         }
+
 
 
         // Method to get series by ID

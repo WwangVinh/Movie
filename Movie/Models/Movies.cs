@@ -14,6 +14,7 @@ public partial class Movies
 
     [StringLength(255)]
     public string Title { get; set; } = null!;
+
     public string? Nation { get; set; }
 
     public string? Description { get; set; }
