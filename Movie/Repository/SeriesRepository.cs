@@ -116,10 +116,10 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\Series\\";
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
             if (file == null) return null;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
+            var folderPath = Path.Combine(_environment.WebRootPath, "Series", folderName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -139,12 +139,12 @@ namespace Movie.Repository
 
 
         // Thêm một bộ series mới
-        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
+        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile seriesPosterFile, IFormFile seriesAvatarUrlFile)
         {
-            var posterUrl = await SaveFileAsync(posterFile, "Posters");
-            var AvatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
+            var posterUrl = await SaveFileAsync(seriesPosterFile, "Posters");
+            var AvatarUrl = await SaveFileAsync(seriesAvatarUrlFile, "AvatarUrl");
 
-            var series = new Series
+            var series = new Models.Series
             {
                 Title = seriesDTO.Title,
                 Description = seriesDTO.Description,
@@ -427,6 +427,7 @@ namespace Movie.Repository
                 DirectorId = s.DirectorId,
                 Season = s.Season,
                 Nation = s.Nation,
+                Status = s.Status,
                 Director = s.Director?.NameDir, // Lấy tên của Director
                 Actors = s.SeriesActors.Select(sa => new RequestActorDTO
                 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Movie.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 
@@ -28,6 +29,8 @@ public class FileUploadOperation : IOperationFilter
 
         if (methodName == "AddSeries")
         {
+            schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
             schemaProperties["Season"] = new OpenApiSchema { Type = "integer" };
             schemaProperties["Nation"] = new OpenApiSchema { Type = "string" };
         }

@@ -58,10 +58,10 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\Admin\\OneDrive\\Tài liệu\\movieDB\\Movies\\Assets\\";
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
             if (file == null) return null;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
+            var folderPath = Path.Combine(_environment.WebRootPath, "Movies", folderName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -189,6 +189,7 @@ namespace Movie.Repository
                 Rating = m.Rating,
                 IsHot = m.IsHot,
                 Nation = m.Nation,
+                Status = m.Status,
                 YearReleased = m.YearReleased,
                 PosterUrl = m.PosterUrl,
                 AvatarUrl = m.AvatarUrl,
