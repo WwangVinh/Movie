@@ -10,6 +10,8 @@ namespace Movie.Models;
 [Table("SeriesActors")]
 public partial class SeriesActors
 {
+    //[Column("SeriesActorID")]
+    public int SeriesActorId { get; set; }
 
     [Key]
     [Column("SeriesID")]
@@ -18,9 +20,6 @@ public partial class SeriesActors
     [Key]
     [Column("ActorId")]
     public int ActorId { get; set; }
-
-    [Column("SeriesActorID")]
-    public int SeriesActorId { get; set; }
 
     [ForeignKey("ActorId")]
     [InverseProperty("SeriesActors")]

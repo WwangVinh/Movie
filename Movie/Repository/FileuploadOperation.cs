@@ -30,7 +30,8 @@ public class FileUploadOperation : IOperationFilter
         if (methodName == "AddSeries")
         {
             schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
-            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["EpisodesTitle"] = new OpenApiSchema { Type = "string" };
             schemaProperties["Season"] = new OpenApiSchema { Type = "integer" };
             schemaProperties["Nation"] = new OpenApiSchema { Type = "string" };
         }

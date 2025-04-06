@@ -56,7 +56,7 @@ namespace Movie.RequestDTO
 
         public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
 
-        public virtual List<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
+        public List<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
     }
 }
 public class ActorDTO

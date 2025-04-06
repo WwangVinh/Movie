@@ -165,33 +165,76 @@ namespace Movie.Repository
             seriesDTO.PosterUrl = posterUrl;
             seriesDTO.AvatarUrl = AvatarUrl;
 
-            if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds) && seriesDTO.CategoriesIds.Any())
-            {
-                string[] CategoriesId = seriesDTO.CategoriesIds.Split(',');
+            //if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds) && seriesDTO.CategoriesIds.Any())
+            //{
+            //    string[] CategoriesId = seriesDTO.CategoriesIds.Split(',');
 
-                foreach (var categoryId in CategoriesId)
+            //    foreach (var categoryId in CategoriesId)
+            //    {
+            //        _context.SeriesCategories.Add(new SeriesCategories
+            //        {
+            //            SeriesId = series.SeriesId,
+            //            CategoryId = Int32.Parse(categoryId)
+            //        });
+            //    }
+            //}
+
+
+            // ====== Liên kết với bảng SeriesCategories ======
+            if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds))
+            {
+                var categoryIds = seriesDTO.CategoriesIds
+                                    .Split(',')
+                                    .Select(id => int.Parse(id.Trim()))
+                                    .ToList();
+
+                foreach (var categoryId in categoryIds)
                 {
-                    _context.SeriesCategories.Add(new SeriesCategories
+                    var seriesCategory = new SeriesCategories
                     {
                         SeriesId = series.SeriesId,
-                        CategoryId = Int32.Parse(categoryId)
-                    });
+                        CategoryId = categoryId
+                    };
+                    _context.SeriesCategories.Add(seriesCategory);
                 }
             }
 
-            if (!string.IsNullOrEmpty(seriesDTO.ActorsIds) && seriesDTO.ActorsIds.Any())
+
+
+            //if (!string.IsNullOrEmpty(seriesDTO.ActorsIds) && seriesDTO.ActorsIds.Any())
+            //{
+            //    string[] actorIds = seriesDTO.ActorsIds.Split(',');
+
+            //    foreach (var actorId in actorIds)
+            //    {
+            //        _context.SeriesActors.Add(new SeriesActors
+            //        {
+            //            SeriesId = series.SeriesId,
+            //            ActorId = Int32.Parse(actorId)
+            //        });
+            //    }
+            //}
+
+            // ====== Liên kết với bảng SeriesActors ======
+            if (!string.IsNullOrEmpty(seriesDTO.ActorsIds))
             {
-                string[] actorIds = seriesDTO.ActorsIds.Split(',');
+                var actorIds = seriesDTO.ActorsIds
+                                    .Split(',')
+                                    .Select(id => int.Parse(id.Trim()))
+                                    .ToList();
 
                 foreach (var actorId in actorIds)
                 {
-                    _context.SeriesActors.Add(new SeriesActors
+                    var seriesActor = new SeriesActors
                     {
                         SeriesId = series.SeriesId,
-                        ActorId = Int32.Parse(actorId)
-                    });
+                        ActorId = actorId
+                    };
+                    _context.SeriesActors.Add(seriesActor);
                 }
             }
+
+
 
             await _context.SaveChangesAsync();
 

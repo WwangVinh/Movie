@@ -60,6 +60,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IMovieCategoryRepository<MovieCategories>, MovieCategoryRepository>();
 builder.Services.AddScoped<IMovieActorRepository<MovieActors>, MovieActorRepository>();
+builder.Services.AddScoped<ISeriesCategoryRepository<SeriesCategories>, SeriesCategoryRepository>();
+builder.Services.AddScoped<ISeriesActorRepository<SeriesActors>, SeriesActorRepository>();
 builder.Services.AddScoped<IMovieHome, MovieHomeRepository>();
 builder.Services.AddScoped<IActorRepository, ActorRepository>();
 builder.Services.AddScoped<IDirectorsRepository, DirectorRepository>();
