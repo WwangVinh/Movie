@@ -12,7 +12,7 @@ public partial class RequestEpisodeDTO
     public int EpisodeNumber { get; set; }
 
 
-    public string? Title { get; set; }
+    public string? EpisodeTitle { get; set; }
 
   
     public string LinkFilmUrl { get; set; } = null!;

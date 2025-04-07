@@ -18,7 +18,7 @@ public partial class Episode
     public int EpisodeNumber { get; set; }
 
     [StringLength(255)]
-    public string? Title { get; set; }
+    public string? EpisodeTitle { get; set; }
 
     [Column("LinkFilmURL")]
     [StringLength(255)]

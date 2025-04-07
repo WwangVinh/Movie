@@ -138,12 +138,13 @@ namespace Movie.Repository
         }
 
 
-        // Thêm một bộ series mới
         public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile seriesPosterFile, IFormFile seriesAvatarUrlFile)
         {
+            // 1. Upload ảnh poster & avatar
             var posterUrl = await SaveFileAsync(seriesPosterFile, "Posters");
-            var AvatarUrl = await SaveFileAsync(seriesAvatarUrlFile, "AvatarUrl");
+            var avatarUrl = await SaveFileAsync(seriesAvatarUrlFile, "AvatarUrl");
 
+            // 2. Tạo entity Series
             var series = new Models.Series
             {
                 Title = seriesDTO.Title,
@@ -153,93 +154,75 @@ namespace Movie.Repository
                 IsHot = seriesDTO.IsHot,
                 YearReleased = seriesDTO.YearReleased,
                 PosterUrl = posterUrl,
-                AvatarUrl = AvatarUrl,
+                AvatarUrl = avatarUrl,
                 Status = 1,
                 Nation = seriesDTO.Nation,
                 Season = seriesDTO.Season
             };
 
+            // 3. Thêm series vào DB
             _context.Series.Add(series);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Lấy SeriesId sau khi thêm
 
+            // 4. Gán lại poster/avatar vào DTO để trả về
             seriesDTO.PosterUrl = posterUrl;
-            seriesDTO.AvatarUrl = AvatarUrl;
+            seriesDTO.AvatarUrl = avatarUrl;
 
-            //if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds) && seriesDTO.CategoriesIds.Any())
-            //{
-            //    string[] CategoriesId = seriesDTO.CategoriesIds.Split(',');
-
-            //    foreach (var categoryId in CategoriesId)
-            //    {
-            //        _context.SeriesCategories.Add(new SeriesCategories
-            //        {
-            //            SeriesId = series.SeriesId,
-            //            CategoryId = Int32.Parse(categoryId)
-            //        });
-            //    }
-            //}
-
-
-            // ====== Liên kết với bảng SeriesCategories ======
+            // 5. Thêm liên kết Category (nhiều-nhiều)
             if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds))
             {
                 var categoryIds = seriesDTO.CategoriesIds
-                                    .Split(',')
-                                    .Select(id => int.Parse(id.Trim()))
-                                    .ToList();
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.Parse(id.Trim()));
 
                 foreach (var categoryId in categoryIds)
                 {
-                    var seriesCategory = new SeriesCategories
+                    _context.SeriesCategories.Add(new SeriesCategories
                     {
                         SeriesId = series.SeriesId,
                         CategoryId = categoryId
-                    };
-                    _context.SeriesCategories.Add(seriesCategory);
+                    });
                 }
             }
 
-
-
-            //if (!string.IsNullOrEmpty(seriesDTO.ActorsIds) && seriesDTO.ActorsIds.Any())
-            //{
-            //    string[] actorIds = seriesDTO.ActorsIds.Split(',');
-
-            //    foreach (var actorId in actorIds)
-            //    {
-            //        _context.SeriesActors.Add(new SeriesActors
-            //        {
-            //            SeriesId = series.SeriesId,
-            //            ActorId = Int32.Parse(actorId)
-            //        });
-            //    }
-            //}
-
-            // ====== Liên kết với bảng SeriesActors ======
+            // 6. Thêm liên kết Actor (nhiều-nhiều)
             if (!string.IsNullOrEmpty(seriesDTO.ActorsIds))
             {
                 var actorIds = seriesDTO.ActorsIds
-                                    .Split(',')
-                                    .Select(id => int.Parse(id.Trim()))
-                                    .ToList();
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => int.Parse(id.Trim()));
 
                 foreach (var actorId in actorIds)
                 {
-                    var seriesActor = new SeriesActors
+                    _context.SeriesActors.Add(new SeriesActors
                     {
                         SeriesId = series.SeriesId,
                         ActorId = actorId
-                    };
-                    _context.SeriesActors.Add(seriesActor);
+                    });
                 }
             }
 
+            // 7. Thêm danh sách tập phim (Episodes)
+            if (seriesDTO.Episode != null && seriesDTO.Episode.Any())
+            {
+                foreach (var ep in seriesDTO.Episode)
+                {
+                    _context.Episodes.Add(new Episode
+                    {
+                        SeriesId = series.SeriesId,
+                        EpisodeNumber = ep.EpisodeNumber,
+                        EpisodeTitle = ep.EpisodeTitle,
+                        LinkFilmUrl = ep.LinkFilmUrl
+                    });
+                }
+            }
 
-
+            // 8. Lưu toàn bộ thay đổi
             await _context.SaveChangesAsync();
 
             return seriesDTO;
         }
+
 
         // Cập nhật thông tin của bộ series
         public async Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath)
@@ -370,7 +353,7 @@ namespace Movie.Repository
                     .Select(e => new RequestEpisodeDTO
                     {
                         EpisodeNumber = e.EpisodeNumber,
-                        Title = e.Title ?? string.Empty,
+                        EpisodeTitle = e.EpisodeTitle ?? string.Empty,
                         LinkFilmUrl = e.LinkFilmUrl ?? string.Empty
                     }).ToListAsync(),
                 TotalEpisode = series.Status ?? 0,

@@ -13,11 +13,11 @@ public partial class SeriesActors
     //[Column("SeriesActorID")]
     public int SeriesActorId { get; set; }
 
-    [Key]
+
     [Column("SeriesID")]
     public int SeriesId { get; set; }
 
-    [Key]
+
     [Column("ActorId")]
     public int ActorId { get; set; }
 
