@@ -147,6 +147,86 @@ namespace Movie.Repository
         }
 
 
+        public async Task<RequestMovieDTO?> UpdateAsync(int id, RequestMovieDTO movieDTO, IFormFile? posterFile, IFormFile? AvatarUrlFile)
+        {
+            var movie = await _context.Movies
+                .Include(m => m.MovieCategories)
+                .Include(m => m.MovieActor)
+                .FirstOrDefaultAsync(m => m.MovieId == id);
+
+            if (movie == null)
+            {
+                return null;
+            }
+
+            if (posterFile != null)
+            {
+                movie.PosterUrl = await SaveFileAsync(posterFile, "Posters");
+            }
+            if (AvatarUrlFile != null)
+            {
+                movie.AvatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
+            }
+
+            movie.Title = movieDTO.Title;
+            movie.Description = movieDTO.Description;
+            movie.Rating = movieDTO.Rating;
+            movie.LinkFilmUrl = movieDTO.LinkFilmUrl;
+            movie.Nation = movieDTO.Nation;
+            movie.DirectorId = movieDTO.DirectorId;
+            movie.IsHot = movieDTO.IsHot;
+            movie.YearReleased = movieDTO.YearReleased;
+            movie.Status = 1;
+
+            if (movieDTO.CategoryIds != null && movieDTO.CategoryIds.Any())
+            {
+                _context.MovieCategories.RemoveRange(movie.MovieCategories);
+                string[] categoryIds = movieDTO.CategoryIds.Split(',');
+                foreach (var categoryId in categoryIds)
+                {
+                    if (int.TryParse(categoryId, out int parsedCategoryId))
+                    {
+                        // Kiểm tra xem CategoryId có tồn tại trong bảng Categories không
+                        if (await _context.Categories.AnyAsync(c => c.CategoryId == parsedCategoryId))
+                        {
+                            _context.MovieCategories.Add(new MovieCategories
+                            {
+                                MovieId = movie.MovieId,
+                                CategoryId = parsedCategoryId
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (movieDTO.ActorIds != null && movieDTO.ActorIds.Any())
+            {
+                _context.MovieActor.RemoveRange(movie.MovieActor);
+                string[] actorIds = movieDTO.ActorIds.Split(',');
+                foreach (var actorId in actorIds)
+                {
+                    if (int.TryParse(actorId, out int parsedActorId))
+                    {
+                        // Kiểm tra xem ActorId có tồn tại trong bảng Actors không
+                        if (await _context.Actors.AnyAsync(a => a.ActorId == parsedActorId))
+                        {
+                            _context.MovieActor.Add(new MovieActors
+                            {
+                                MovieId = movie.MovieId,
+                                ActorId = parsedActorId
+                            });
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            movieDTO.PosterUrl = movie.PosterUrl;
+            movieDTO.AvatarUrl = movie.AvatarUrl;
+
+            return movieDTO;
+        }
 
 
         public async Task<IEnumerable<RequestMovieDTO>> GetMovieAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID)

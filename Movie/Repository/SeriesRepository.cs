@@ -78,15 +78,26 @@ namespace Movie.Repository
                                     SeriesId = s.SeriesId,
                                     Title = s.Title,
                                     Description = s.Description,
-                                    DirectorId = s.DirectorId,
                                     Rating = s.Rating,
-                                    IsHot = s.IsHot ?? false, // Xử lý nullable
+                                    IsHot = s.IsHot,
                                     YearReleased = s.YearReleased,
                                     PosterUrl = s.PosterUrl,
                                     AvatarUrl = s.AvatarUrl,
-                                    Status = s.Status ?? 0, // Xử lý nullable
+                                    DirectorId = s.DirectorId,
                                     Season = s.Season,
-                                    Nation = s.Nation  // Thêm Nation
+                                    Nation = s.Nation,
+                                    Status = s.Status,
+                                    Director = s.Director.NameDir, // Lấy tên của Director
+                                    Actors = s.SeriesActors.Select(sa => new RequestActorDTO
+                                    {
+                                        ActorId = sa.ActorId,
+                                        NameAct = sa.Actors.NameAct // Lấy tên của Actor
+                                    }).ToList(),
+                                    Categories = s.SeriesCategories.Select(sc => new RequestCategoryDTO
+                                    {
+                                        CategoryId = sc.CategoryId,
+                                        CategoryName = sc.Categories.CategoryName // Lấy tên của Category
+                                    }).ToList()
                                 })
                                 .ToListAsync();
 

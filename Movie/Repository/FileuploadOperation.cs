@@ -15,7 +15,7 @@ public class FileUploadOperation : IOperationFilter
         var schemaProperties = new Dictionary<string, OpenApiSchema>();
         var requiredFields = new HashSet<string>();
 
-        // Common file parameter for all methods that use IFormFile
+        // Common file parameters
         if (fileParams.Any(p => p.Name == "AvatarUrlFile"))
         {
             schemaProperties["AvatarUrlFile"] = new OpenApiSchema { Type = "string", Format = "binary" };
@@ -60,6 +60,22 @@ public class FileUploadOperation : IOperationFilter
 
             requiredFields = new HashSet<string> { "Title", "posterFile", "AvatarUrlFile" };
         }
+        else if (methodName == "UpdateMovie")
+        {
+            schemaProperties["MovieId"] = new OpenApiSchema { Type = "integer" };
+            schemaProperties["Title"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Description"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Rating"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["DirectorId"] = new OpenApiSchema { Type = "integer" };
+            schemaProperties["IsHot"] = new OpenApiSchema { Type = "boolean" };
+            schemaProperties["YearReleased"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["CategoryIds"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["ActorIds"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Nation"] = new OpenApiSchema { Type = "string" };
+
+            requiredFields = new HashSet<string> { "MovieId", "Title" }; // posterFile and AvatarUrlFile are optional
+        }
         else if (methodName == "AddDirector")
         {
             schemaProperties["NameDir"] = new OpenApiSchema { Type = "string" };
@@ -67,7 +83,7 @@ public class FileUploadOperation : IOperationFilter
             schemaProperties["Nationality"] = new OpenApiSchema { Type = "string" };
             schemaProperties["Professional"] = new OpenApiSchema { Type = "string" };
 
-            requiredFields = new HashSet<string> { "NameDir" }; // Only NameDir is required
+            requiredFields = new HashSet<string> { "NameDir" };
         }
 
         operation.RequestBody = new OpenApiRequestBody
