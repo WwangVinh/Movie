@@ -42,58 +42,15 @@ namespace Movie.ControllersAdmin
             return Ok(actors);
         }
 
-        //// POST: api/Directors
-        //[HttpPost]
-        //public async Task<ActionResult> AddDirector(
-        //    [FromBody] RequestDirectorDTO directorDTO,
-        //    [FromForm] IFormFile? avatarFile,   // Avatar file input
-        //    [FromForm] IFormFile? posterFile)   // Poster file input
-        //{
-        //    // Lưu tệp avatar và poster vào thư mục đã chỉ định
-        //    string avatarFilePath = null;
-        //    string posterFilePath = null;
-
-        //    if (avatarFile != null)
-        //    {
-        //        avatarFilePath = await SaveFile(avatarFile, "Avatars");
-        //    }
-
-        //    if (posterFile != null)
-        //    {
-        //        posterFilePath = await SaveFile(posterFile, "Posters");
-        //    }
-
-        //    // Thêm đạo diễn vào cơ sở dữ liệu
-        //    var director = await _directorRepository.AddDirectorAsync(directorDTO);
-
-        //    return CreatedAtAction(nameof(GetDirector), new { id = director.DirectorID }, director);
-        //}
-
-        //// Lưu tệp lên thư mục tương ứng
-        //private async Task<string> SaveFile(IFormFile file, string subFolder)
-        //{
-        //    if (file == null || file.Length == 0)
-        //        return null; // Trả về null nếu không có file
-
-        //    // Tạo thư mục nếu chưa có
-        //    string directoryPath = Path.Combine(_assetsFolderPath, subFolder);
-        //    if (!Directory.Exists(directoryPath))
-        //    {
-        //        Directory.CreateDirectory(directoryPath);
-        //    }
-
-        //    // Tạo tên file với phần mở rộng
-        //    string fileName = Path.GetFileNameWithoutExtension(file.FileName) + "_" + Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-        //    string filePath = Path.Combine(directoryPath, fileName);
-
-        //    // Lưu file vào thư mục
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-
-        //    return filePath; // Trả về đường dẫn lưu trữ file
-        //}
+        // POST: api/Directors/Add-Director
+        [HttpPost("AddDirector")]
+        public async Task<IActionResult> AddDirector(
+            [FromForm] RequestDirectorDTO directorDTO, IFormFile AvatarUrlFile)
+        {
+            var result = await _directorRepository.AddDirectorAsync(directorDTO, AvatarUrlFile);
+            if (result == null) return BadRequest("Failed to add director");
+            return Ok(result);
+        }
 
         //// GET: api/Directors/5
         //[HttpGet("{id}")]

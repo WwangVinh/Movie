@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 using Movie.RequestDTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ namespace Movie.Repository
     public class DirectorRepository : IDirectorsRepository
     {
         private readonly movieDB _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public DirectorRepository(movieDB context)
+        public DirectorRepository(movieDB context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // Lấy chi tiết đạo diễn theo ID, bao gồm các bộ phim và series mà đạo diễn tham gia
@@ -112,28 +115,53 @@ namespace Movie.Repository
             return directorDTOs;
         }
 
-        // Thêm mới một đạo diễn
-        public async Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO)
+        // Lưu ảnh vào thư mục chỉ định
+        private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            var director = new Director
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            if (file == null) return null;
+
+            var folderPath = Path.Combine(_environment.WebRootPath, "Directors", folderName);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Lưu đường dẫn  
+            return $" https://source.cmcglobal.com.vn/g1/du1.33/be-base/-/raw/main/Assets/{folderName}/{fileName}";
+        }
+        // Thêm mới một đạo diễn
+        public async Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO, IFormFile? AvatarUrlFile)
+        {
+            // Save avatar file if provided and set URL
+            var AvatarUrl = AvatarUrlFile != null ? await SaveFileAsync(AvatarUrlFile, "AvatarUrl") : null;
+
+            var director = new Models.Director
             {
                 NameDir = directorDTO.NameDir,
+                Description = directorDTO.Description,
                 Nationality = directorDTO.Nationality,
-                AvatarUrl = directorDTO.AvatarUrl,
+                AvatarUrl = AvatarUrl,  // Use the saved URL instead of DTO's original value
                 Professional = directorDTO.Professional
+                // Add other properties as needed
             };
 
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            return new RequestDirectorDTO
-            {
-                DirectorID = director.DirectorId,
-                NameDir = director.NameDir,
-                Nationality = director.Nationality,
-                AvatarUrl = director.AvatarUrl,
-                Professional = director.Professional
-            };
+            // Update DTO with the new ID and URL
+            directorDTO.DirectorID = director.DirectorId;  // Assuming DirectorId is the PK
+            directorDTO.AvatarUrl = AvatarUrl;
+
+            return directorDTO;
         }
 
         // Cập nhật thông tin đạo diễn

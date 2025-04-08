@@ -13,12 +13,20 @@ namespace Movie.Repository
     {
         private readonly movieDB _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly ISeriesCategoryRepository<SeriesCategories> _seriesCategoryRepo;
+        private readonly ISeriesActorRepository<SeriesActors> _seriesActorRepo;
+        private readonly IEpisodeRepository<Episode> _episodeRepo;
         private readonly string _assetsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
 
-        public SeriesRepository(movieDB context, IWebHostEnvironment environment)
+        public SeriesRepository(movieDB context, IWebHostEnvironment environment, ISeriesCategoryRepository<SeriesCategories> seriesCategoryRepo,
+    ISeriesActorRepository<SeriesActors> seriesActorRepo,
+    IEpisodeRepository<Episode> episodeRepo)
         {
             _environment = environment;
             _context = context;
+            _seriesCategoryRepo = seriesCategoryRepo;
+            _seriesActorRepo = seriesActorRepo;
+            _episodeRepo = episodeRepo;
         }
 
         // Lấy danh sách series với phân trang, tìm kiếm và sắp xếp
@@ -177,7 +185,7 @@ namespace Movie.Repository
 
                 foreach (var categoryId in categoryIds)
                 {
-                    _context.SeriesCategories.Add(new SeriesCategories
+                    await _seriesCategoryRepo.AddAsync(new SeriesCategories
                     {
                         SeriesId = series.SeriesId,
                         CategoryId = categoryId
@@ -194,7 +202,7 @@ namespace Movie.Repository
 
                 foreach (var actorId in actorIds)
                 {
-                    _context.SeriesActors.Add(new SeriesActors
+                    await _seriesActorRepo.AddAsync(new SeriesActors
                     {
                         SeriesId = series.SeriesId,
                         ActorId = actorId
@@ -207,7 +215,7 @@ namespace Movie.Repository
             {
                 foreach (var ep in seriesDTO.Episode)
                 {
-                    _context.Episodes.Add(new Episode
+                    await _episodeRepo.AddAsync(new Episode
                     {
                         SeriesId = series.SeriesId,
                         EpisodeNumber = ep.EpisodeNumber,

@@ -10,6 +10,6 @@ public interface IDirectorsRepository
         int page = 1,
         int pageSize = 10
     );
-    Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO);
     Task<RequestDirectorDTO> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO);
+    Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO, IFormFile AvatarUrlFile);
 }
