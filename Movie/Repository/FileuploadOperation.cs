@@ -37,9 +37,6 @@ public class FileUploadOperation : IOperationFilter
             schemaProperties["YearReleased"] = new OpenApiSchema { Type = "number" };
             schemaProperties["CategoryIds"] = new OpenApiSchema { Type = "number" };
             schemaProperties["ActorIds"] = new OpenApiSchema { Type = "number" };
-            schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
-            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
-            schemaProperties["EpisodeTitle"] = new OpenApiSchema { Type = "string" };
             schemaProperties["Season"] = new OpenApiSchema { Type = "integer" };
             schemaProperties["Nation"] = new OpenApiSchema { Type = "string" };
 
@@ -60,6 +57,7 @@ public class FileUploadOperation : IOperationFilter
 
             requiredFields = new HashSet<string> { "Title", "posterFile", "AvatarUrlFile" };
         }
+
         else if (methodName == "UpdateMovie")
         {
             schemaProperties["MovieId"] = new OpenApiSchema { Type = "integer" };
@@ -76,6 +74,48 @@ public class FileUploadOperation : IOperationFilter
 
             requiredFields = new HashSet<string> { "MovieId", "Title" }; // posterFile and AvatarUrlFile are optional
         }
+
+        //else if (methodName == "AddEpisode")
+        //{
+        //    schemaProperties["SeriesId"] = new OpenApiSchema { Type = "number" };
+        //    schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
+        //    schemaProperties["Title"] = new OpenApiSchema { Type = "string" };
+        //    schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
+
+        //    requiredFields = new HashSet<string> { "SeriesId", "EpisodeNumber", "LinkFilmUrl" };
+        //}
+
+        else if (methodName == "AddEpisode")
+        {
+            schemaProperties["SeriesId"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["Title"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
+
+            requiredFields = new HashSet<string> { "SeriesId", "EpisodeNumber", "LinkFilmUrl" };
+        }
+
+        else if (methodName == "AddActor")
+        {
+            schemaProperties["NameAct"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Description"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Nationality"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Professional"] = new OpenApiSchema { Type = "string" };
+
+            requiredFields = new HashSet<string> { "NameAct" };
+        }
+
+        else if (methodName == "UpdateActor")
+        {
+            schemaProperties["NameAct"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Description"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Nationality"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Professional"] = new OpenApiSchema { Type = "string" };
+
+            requiredFields = new HashSet<string> { "NameAct" };
+        }
+
+
         else if (methodName == "AddDirector")
         {
             schemaProperties["NameDir"] = new OpenApiSchema { Type = "string" };
@@ -85,6 +125,18 @@ public class FileUploadOperation : IOperationFilter
 
             requiredFields = new HashSet<string> { "NameDir" };
         }
+
+        else if (methodName == "UpdateDirector")
+        {
+            schemaProperties["NameDir"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Description"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Nationality"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["Professional"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["AvatarUrlFile"] = new OpenApiSchema { Type = "string", Format = "binary" };
+
+            requiredFields = new HashSet<string> { "NameDir" }; // chỉ bắt buộc tên
+        }
+
 
         operation.RequestBody = new OpenApiRequestBody
         {

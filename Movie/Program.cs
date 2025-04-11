@@ -62,7 +62,7 @@ builder.Services.AddScoped<IMovieCategoryRepository<MovieCategories>, MovieCateg
 builder.Services.AddScoped<IMovieActorRepository<MovieActors>, MovieActorRepository>();
 builder.Services.AddScoped<ISeriesCategoryRepository<SeriesCategories>, SeriesCategoryRepository>();
 builder.Services.AddScoped<ISeriesActorRepository<SeriesActors>, SeriesActorRepository>();
-builder.Services.AddScoped<IEpisodeRepository<Episode>, EpisodeRepository>();
+builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
 builder.Services.AddScoped<IMovieHome, MovieHomeRepository>();
 builder.Services.AddScoped<IActorRepository, ActorRepository>();
 builder.Services.AddScoped<IDirectorsRepository, DirectorRepository>();

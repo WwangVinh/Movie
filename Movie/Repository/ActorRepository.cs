@@ -6,17 +6,20 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Movie.RequestDTO;
+using System;
 
 namespace Movie.Repository
 {
     public class ActorRepository : IActorRepository
     {
         private readonly movieDB _context;
+        private readonly IWebHostEnvironment _environment;
         private readonly string _assetsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
 
-        public ActorRepository(movieDB context)
+        public ActorRepository(movieDB context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         // Lấy tất cả các actor với phân trang, tìm kiếm, và sắp xếp
@@ -92,79 +95,93 @@ namespace Movie.Repository
         }
 
 
-        // Cập nhật thông tin actor
-        public async Task<RequestActorDTO?> AddActorAsync(RequestActorDTO actorDTO)
+        // Lưu ảnh vào thư mục chỉ định
+        private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            // Kiểm tra nếu Actor với cùng tên đã tồn tại
-            var existingActor = await _context.Actors
-                                              .FirstOrDefaultAsync(a => a.NameAct == actorDTO.NameAct);
-            if (existingActor != null)
+            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            if (file == null) return null;
+
+            var folderPath = Path.Combine(_environment.WebRootPath, "Directors", folderName);
+            if (!Directory.Exists(folderPath))
             {
-                // Nếu Actor đã tồn tại, trả về null hoặc thông báo lỗi
-                return null; // Hoặc throw new ArgumentException("Actor with this name already exists.");
+                Directory.CreateDirectory(folderPath);
             }
 
-            // Chuyển đổi từ RequestActorDTO sang Actor
-            var actor = new Actor
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Lưu đường dẫn  
+            return $" https://source.cmcglobal.com.vn/g1/du1.33/be-base/-/raw/main/Assets/{folderName}/{fileName}";
+        }
+
+        // Thêm mới một diễn viên
+        public async Task<RequestActorDTO> AddActorAsync(RequestActorDTO actorDTO, IFormFile? AvatarUrlFile)
+        {
+            var avatarUrl = AvatarUrlFile != null ? await SaveFileAsync(AvatarUrlFile, "AvatarUrl") : null;
+
+            var actor = new Models.Actor
             {
                 NameAct = actorDTO.NameAct,
                 Description = actorDTO.Description,
                 Nationality = actorDTO.Nationality,
-                AvatarUrl = actorDTO.AvatarUrl
+                AvatarUrl = avatarUrl,
+                Professional = actorDTO.Professional
             };
 
-            // Thêm actor mới vào database
             _context.Actors.Add(actor);
             await _context.SaveChangesAsync();
 
-            // Trả về actor vừa được thêm, nhưng phải trả về kiểu RequestActorDTO
-            return new RequestActorDTO
-            {
-                ActorId = actor.ActorId,
-                NameAct = actor.NameAct,
-                Description = actor.Description,
-                Nationality = actor.Nationality,
-                AvatarUrl = actor.AvatarUrl
-            };
+            // Gán lại ID và AvatarUrl sau khi lưu
+            actorDTO.ActorId = actor.ActorId;
+            actorDTO.AvatarUrl = avatarUrl;
+
+            return actorDTO;
         }
 
-        public async Task<RequestActorDTO?> UpdateActorAsync(int id, RequestActorDTO actorDTO)
+        // Sửa thông tin diễn viên
+        public async Task<RequestActorDTO?> UpdateActorAsync(int id, RequestActorDTO actorDTO, IFormFile? AvatarUrlFile)
         {
-            var existingActor = await _context.Actors.FindAsync(id);
-            if (existingActor == null) return null;
+            var actor = await _context.Actors.FindAsync(id);
+            if (actor == null) return null;
 
-            // Cập nhật các thông tin của actor từ RequestActorDTO
-            existingActor.NameAct = actorDTO.NameAct;
-            existingActor.Description = actorDTO.Description;
-            existingActor.Nationality = actorDTO.Nationality;
-            existingActor.Professional = actorDTO.Professional;
-            existingActor.AvatarUrl = actorDTO.AvatarUrl;
+            // Nếu có ảnh mới -> upload ảnh và cập nhật
+            if (AvatarUrlFile != null)
+            {
+                var avatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
+                actor.AvatarUrl = avatarUrl;
+                actorDTO.AvatarUrl = avatarUrl;
+            }
 
-            // Lưu thay đổi vào database
-            _context.Actors.Update(existingActor);
+            // Cập nhật các thông tin khác
+            actor.NameAct = actorDTO.NameAct;
+            actor.Description = actorDTO.Description;
+            actor.Nationality = actorDTO.Nationality;
+            actor.Professional = actorDTO.Professional;
+
+
             await _context.SaveChangesAsync();
 
-            // Trả về actor đã được cập nhật dưới dạng RequestActorDTO
-            return new RequestActorDTO
-            {
-                ActorId = existingActor.ActorId,
-                NameAct = existingActor.NameAct,
-                Description = existingActor.Description,
-                Nationality = existingActor.Nationality,
-                AvatarUrl = existingActor.AvatarUrl
-            };
+            actorDTO.ActorId = actor.ActorId;
+            return actorDTO;
         }
+
 
 
         // Xóa actor theo ID
-        public async Task DeleteActorAsync(int id)
+        public async Task<bool> DeleteActorAsync(int id)
         {
             var actor = await _context.Actors.FindAsync(id);
-            if (actor != null)
-            {
-                _context.Actors.Remove(actor);
-                await _context.SaveChangesAsync();
-            }
+            if (actor == null) return false;
+
+            _context.Actors.Remove(actor);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         // Phương thức lưu file
@@ -215,17 +232,17 @@ namespace Movie.Repository
                     NameAct = actor.NameAct,
                     Nationality = actor.Nationality
                 },
-                Movie = actor.MovieActor.Select(ma => new ActorMovieDTO
+                Movies = actor.MovieActor.Select(ma => new ActorMoviesDTO
                 {
                     MovieId = ma.Movie.MovieId,
                     AvatarUrl = ma.Movie.AvatarUrl,
                     MovieName = ma.Movie.Title
                 }).ToList(),
-                Series = actor.SeriesActors.Select(ma => new ActorMovieDTO
+                Series = actor.SeriesActors.Select(ma => new ActorSeriesDTO
                 {
-                    MovieId = ma.Series.SeriesId,
+                    SeriesId = ma.Series.SeriesId,
                     AvatarUrl = ma.Series.AvatarUrl,
-                    MovieName = ma.Series.Title
+                    SerieName = ma.Series.Title
                 }).ToList()
             };
 

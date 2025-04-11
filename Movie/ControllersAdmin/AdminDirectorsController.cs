@@ -20,14 +20,14 @@ namespace Movie.ControllersAdmin
             _directorRepository = directorRepository;
         }
 
-        // GET: api/Actors
-        [HttpGet("List-Actors")]
+        // GET: api/Directors
+        [HttpGet("List-Directors")]
         public async Task<ActionResult<IEnumerable<RequestDirectorDTO>>> GetAllDirectorsAsync(
             string? search = null,
             string sortBy = "DirectorId",
             string sortDirection = "asc",
             int page = 1,
-            int pageSize = 10
+            int pageSize = 100
             )
         {
             // Lấy danh sách actor từ repository
@@ -35,7 +35,7 @@ namespace Movie.ControllersAdmin
 
             if (actors == null || !actors.Any())
             {
-                return NotFound(new { Message = "Không tìm thấy actor nào." });
+                return NotFound(new { Message = "Không tìm thấy director nào." });
             }
 
             // Trả về kết quả
@@ -48,20 +48,44 @@ namespace Movie.ControllersAdmin
             [FromForm] RequestDirectorDTO directorDTO, IFormFile AvatarUrlFile)
         {
             var result = await _directorRepository.AddDirectorAsync(directorDTO, AvatarUrlFile);
-            if (result == null) return BadRequest("Failed to add director");
+            if (result == null) return BadRequest("lỗi khi thêm director");
             return Ok(result);
         }
 
-        //// GET: api/Directors/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult> GetDirector(int id)
-        //{
-        //    var director = await _directorRepository.GetDirectorByIdAsync(id);
-        //    if (director == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(director);
-        //}
+        // PUT: api/Directors/Update-Director/{id}
+        [HttpPut("UpdateDirector/{id}")]
+        public async Task<IActionResult> UpdateDirector(
+            int id,
+            [FromForm] RequestDirectorDTO directorDTO,
+            IFormFile? AvatarUrlFile)
+        {
+            var result = await _directorRepository.UpdateDirectorAsync(id, directorDTO, AvatarUrlFile);
+            if (result == null) return NotFound("Director không tồn tại");
+            return Ok(result);
+        }
+
+        // GET: api/Directors/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetDirector(int id)
+        {
+            var director = await _directorRepository.GetDirectorByIdAsync(id);
+            if (director == null)
+            {
+                return NotFound();
+            }
+            return Ok(director);
+        }
+
+        // DELETE: api/Directors/Delete-Director/{id}
+        [HttpDelete("DeleteDirector/{id}")]
+        public async Task<IActionResult> DeleteDirector(int id)
+        {
+            var isDeleted = await _directorRepository.DeleteDirectorAsync(id);
+            if (!isDeleted) return NotFound("Director không tồn tại để xóa");
+
+            return Ok("Director được xóa thành công");
+        }
+
+
     }
 }

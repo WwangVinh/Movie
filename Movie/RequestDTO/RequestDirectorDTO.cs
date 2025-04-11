@@ -25,9 +25,16 @@ public class DirectorMoviesDTO
     public required string MovieName { get; set; }
 }
 
+public class DirectorSeriesDTO
+{
+    public int SeriesId { get; set; }
+    public string? AvatarUrl { get; set; }
+    public required string SerieName { get; set; }
+}
+
 public class DirectorDetailDTO
 {
     public required RequestDirectorDTO Director { get; set; }
     public required List<DirectorMoviesDTO> Movies { get; set; }
-    public required List<DirectorMoviesDTO> Series { get; set; }
+    public required List<DirectorSeriesDTO> Series { get; set; }
 }

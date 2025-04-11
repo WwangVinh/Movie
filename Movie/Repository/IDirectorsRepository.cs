@@ -10,6 +10,8 @@ public interface IDirectorsRepository
         int page = 1,
         int pageSize = 10
     );
-    Task<RequestDirectorDTO> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO);
+    Task<RequestDirectorDTO?> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO, IFormFile? AvatarUrlFile);
     Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO, IFormFile AvatarUrlFile);
+    Task<bool> DeleteDirectorAsync(int id);
+
 }

@@ -22,16 +22,24 @@ public partial class RequestActorDTO
 
 }
 
-public partial class ActorMovieDTO
+public partial class ActorMoviesDTO
 {
     public int MovieId { get; set; }
     public string? AvatarUrl { get; set; }
     public required string MovieName { get; set; }
 }
 
+public partial class ActorSeriesDTO
+{
+    public int SeriesId { get; set; }
+    public string? AvatarUrl { get; set; }
+    public required string SerieName { get; set; }
+}
+
+
 public class ActorDetailDTO
 {
     public required RequestActorDTO Actor { get; set; }
-    public required List<ActorMovieDTO> Movie { get; set; }
-    public required List<ActorMovieDTO> Series { get; set; }
+    public required List<ActorMoviesDTO> Movies { get; set; }
+    public required List<ActorSeriesDTO> Series { get; set; }
 }

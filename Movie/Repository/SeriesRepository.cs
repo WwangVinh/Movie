@@ -15,18 +15,14 @@ namespace Movie.Repository
         private readonly IWebHostEnvironment _environment;
         private readonly ISeriesCategoryRepository<SeriesCategories> _seriesCategoryRepo;
         private readonly ISeriesActorRepository<SeriesActors> _seriesActorRepo;
-        private readonly IEpisodeRepository<Episode> _episodeRepo;
         private readonly string _assetsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
 
-        public SeriesRepository(movieDB context, IWebHostEnvironment environment, ISeriesCategoryRepository<SeriesCategories> seriesCategoryRepo,
-    ISeriesActorRepository<SeriesActors> seriesActorRepo,
-    IEpisodeRepository<Episode> episodeRepo)
+        public SeriesRepository(movieDB context, IWebHostEnvironment environment, ISeriesCategoryRepository<SeriesCategories> seriesCategoryRepo, ISeriesActorRepository<SeriesActors> seriesActorRepo)
         {
             _environment = environment;
             _context = context;
             _seriesCategoryRepo = seriesCategoryRepo;
             _seriesActorRepo = seriesActorRepo;
-            _episodeRepo = episodeRepo;
         }
 
         // Lấy danh sách series với phân trang, tìm kiếm và sắp xếp
@@ -176,7 +172,7 @@ namespace Movie.Repository
                 AvatarUrl = avatarUrl,
                 Status = 1,
                 Nation = seriesDTO.Nation,
-                Season = seriesDTO.Season
+                Season = seriesDTO.Season ??1
             };
 
             // 3. Thêm series vào DB
@@ -187,57 +183,75 @@ namespace Movie.Repository
             seriesDTO.PosterUrl = posterUrl;
             seriesDTO.AvatarUrl = avatarUrl;
 
-            // 5. Thêm liên kết Category (nhiều-nhiều)
-            if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds))
-            {
-                var categoryIds = seriesDTO.CategoriesIds
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(id => int.Parse(id.Trim()));
+            //// 5. Thêm liên kết Category (nhiều-nhiều)
+            //if (!string.IsNullOrEmpty(seriesDTO.CategoriesIds))
+            //{
+            //    var categoryIds = seriesDTO.CategoriesIds
+            //        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            //        .Select(id => int.Parse(id.Trim()));
 
-                foreach (var categoryId in categoryIds)
+            //    foreach (var categoryId in categoryIds)
+            //    {
+            //        await _seriesCategoryRepo.AddAsync(new SeriesCategories
+            //        {
+            //            SeriesId = series.SeriesId,
+            //            CategoryId = categoryId
+            //        });
+            //    }
+            //}
+
+            //// 6. Thêm liên kết Actor (nhiều-nhiều)
+            //if (!string.IsNullOrEmpty(seriesDTO.ActorsIds))
+            //{
+            //    var actorIds = seriesDTO.ActorsIds
+            //        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            //        .Select(id => int.Parse(id.Trim()));
+
+            //    foreach (var actorId in actorIds)
+            //    {
+            //        await _seriesActorRepo.AddAsync(new SeriesActors
+            //        {
+            //            SeriesId = series.SeriesId,
+            //            ActorId = actorId
+            //        });
+            //    } 
+
+            //}
+
+            //Xử lý thêm Category vào MovieCategory
+            if (seriesDTO.CategoriesIds != null && seriesDTO.CategoriesIds.Any())
+            {
+                string[] categoryId = seriesDTO.CategoriesIds.Split(',');
+
+                foreach (var category in categoryId)
                 {
-                    await _seriesCategoryRepo.AddAsync(new SeriesCategories
+                    _context.SeriesCategories.Add(new SeriesCategories
                     {
                         SeriesId = series.SeriesId,
-                        CategoryId = categoryId
+                        CategoryId = Int32.Parse(category)
                     });
                 }
             }
 
-            // 6. Thêm liên kết Actor (nhiều-nhiều)
-            if (!string.IsNullOrEmpty(seriesDTO.ActorsIds))
+            //  Xử lý thêm Actor vào MovieActors
+            if (seriesDTO.ActorsIds != null && seriesDTO.ActorsIds.Any())
             {
-                var actorIds = seriesDTO.ActorsIds
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(id => int.Parse(id.Trim()));
+                string[] actorId = seriesDTO.ActorsIds.Split(',');
 
-                foreach (var actorId in actorIds)
+                foreach (var actor in actorId)
                 {
-                    await _seriesActorRepo.AddAsync(new SeriesActors
+                    _context.SeriesActors.Add(new SeriesActors
                     {
                         SeriesId = series.SeriesId,
-                        ActorId = actorId
+                        ActorId = Int32.Parse(actor)
                     });
                 }
             }
 
-            // 7. Thêm danh sách tập phim (Episodes)
-            if (seriesDTO.Episode != null && seriesDTO.Episode.Any())
-            {
-                foreach (var ep in seriesDTO.Episode)
-                {
-                    await _episodeRepo.AddAsync(new Episode
-                    {
-                        SeriesId = series.SeriesId,
-                        EpisodeNumber = ep.EpisodeNumber,
-                        EpisodeTitle = ep.EpisodeTitle,
-                        LinkFilmUrl = ep.LinkFilmUrl
-                    });
-                }
-            }
 
-            // 8. Lưu toàn bộ thay đổi
+            // 7. Lưu toàn bộ thay đổi
             await _context.SaveChangesAsync();
+               
 
             return seriesDTO;
         }
@@ -372,7 +386,6 @@ namespace Movie.Repository
                     .Select(e => new RequestEpisodeDTO
                     {
                         EpisodeNumber = e.EpisodeNumber,
-                        EpisodeTitle = e.EpisodeTitle ?? string.Empty,
                         LinkFilmUrl = e.LinkFilmUrl ?? string.Empty
                     }).ToListAsync(),
                 TotalEpisode = series.Status ?? 0,

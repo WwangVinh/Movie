@@ -13,9 +13,9 @@ namespace Movie.Repository
         int pageSize = 10                 // Số lượng actor trên mỗi trang
         );
         Task<RequestActorDTO?> AdminGetActorByIdAsync(int id);
-        Task<RequestActorDTO?> AddActorAsync(RequestActorDTO actor);
-        Task<RequestActorDTO?> UpdateActorAsync(int id, RequestActorDTO actor);
-        Task DeleteActorAsync(int id);
+        Task<RequestActorDTO> AddActorAsync(RequestActorDTO actorDTO, IFormFile? AvatarUrlFile);
+        Task<RequestActorDTO?> UpdateActorAsync(int id, RequestActorDTO actorDTO, IFormFile? AvatarUrlFile);
+        Task<bool> DeleteActorAsync(int id);
         Task<string> SaveFile(IFormFile file, string folderName);  // Phương thức mới
         Task<ActorDetailDTO?> GetActorByIdAsync(int id);
     }

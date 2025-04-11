@@ -46,11 +46,11 @@ namespace Movie.Repository
                     AvatarUrl = m.AvatarUrl,
                     MovieName = m.Title
                 }).ToList(),
-                Series = director.Series.Select(s => new DirectorMoviesDTO
+                Series = director.Series.Select(s => new DirectorSeriesDTO
                 {
-                    MovieId = s.SeriesId,
+                    SeriesId = s.SeriesId,
                     AvatarUrl = s.AvatarUrl,
-                    MovieName = s.Title
+                    SerieName = s.Title
                 }).ToList()
             };
 
@@ -138,6 +138,8 @@ namespace Movie.Repository
             // Lưu đường dẫn  
             return $" https://source.cmcglobal.com.vn/g1/du1.33/be-base/-/raw/main/Assets/{folderName}/{fileName}";
         }
+
+
         // Thêm mới một đạo diễn
         public async Task<RequestDirectorDTO> AddDirectorAsync(RequestDirectorDTO directorDTO, IFormFile? AvatarUrlFile)
         {
@@ -164,27 +166,41 @@ namespace Movie.Repository
             return directorDTO;
         }
 
-        // Cập nhật thông tin đạo diễn
-        public async Task<RequestDirectorDTO> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO)
+        // Sửa thông tin đạo diễn
+        public async Task<RequestDirectorDTO?> UpdateDirectorAsync(int id, RequestDirectorDTO directorDTO, IFormFile? AvatarUrlFile)
         {
             var director = await _context.Directors.FindAsync(id);
             if (director == null) return null;
 
+            // Nếu có file mới -> lưu lại ảnh và cập nhật đường dẫn
+            if (AvatarUrlFile != null)
+            {
+                var avatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
+                director.AvatarUrl = avatarUrl;
+                directorDTO.AvatarUrl = avatarUrl;
+            }
+
             director.NameDir = directorDTO.NameDir;
+            director.Description = directorDTO.Description;
             director.Nationality = directorDTO.Nationality;
-            director.AvatarUrl = directorDTO.AvatarUrl;
             director.Professional = directorDTO.Professional;
 
             await _context.SaveChangesAsync();
 
-            return new RequestDirectorDTO
-            {
-                DirectorID = director.DirectorId,
-                NameDir = director.NameDir,
-                Nationality = director.Nationality,
-                AvatarUrl = director.AvatarUrl,
-                Professional = director.Professional
-            };
+            directorDTO.DirectorID = director.DirectorId;
+            return directorDTO;
         }
+
+        public async Task<bool> DeleteDirectorAsync(int id)
+        {
+            var director = await _context.Directors.FindAsync(id);
+            if (director == null) return false;
+
+            _context.Directors.Remove(director);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }
