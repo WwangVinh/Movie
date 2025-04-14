@@ -28,7 +28,6 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-
 // Đọc cấu hình từ appsettings.json
 IConfigurationRoot configuration = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)

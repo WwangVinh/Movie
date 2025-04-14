@@ -36,9 +36,9 @@ namespace Movie.RequestDTO
         [Range(1900, 2100, ErrorMessage = "Năm phát hành phải từ 1900 đến hiện tại")]
         public int? YearReleased { get; set; }
 
-        public string? ActorsIds { get; set; }
+        public string? ActorIds { get; set; }
 
-        public string? CategoriesIds { get; set; }
+        public string? CategoryIds { get; set; }
 
         public int? Status { get; set; } // 1: active, 0: deactivated
 
@@ -53,13 +53,13 @@ namespace Movie.RequestDTO
 
         public virtual ICollection<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
 
-        public virtual ICollection<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
+        //public virtual ICollection<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
 
-        public virtual ICollection<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+        //public virtual ICollection<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
 
-        //public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+        public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
 
-        //public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
+        public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
 
         //public List<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
     }

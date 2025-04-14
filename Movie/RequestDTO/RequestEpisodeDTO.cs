@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Annotations; // Đừng quên import
 
 namespace Movie.RequestDTO
 {
     public class RequestEpisodeDTO
     {
-        [BindNever] // 👈 Không nhận từ client khi POST (Swagger sẽ ẩn)
-        public int EpisodeId { get; set; } // Tự động tăng, chỉ dùng khi trả về hoặc PUT
+        public int EpisodeId { get; set; }
 
         [Required(ErrorMessage = "SeriesId là bắt buộc")]
         public int SeriesId { get; set; }

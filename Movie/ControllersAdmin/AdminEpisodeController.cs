@@ -23,13 +23,18 @@ namespace Movie.Controllers
         [HttpPost("AddEpisode")]
         public async Task<IActionResult> AddEpisode([FromForm] RequestEpisodeDTO episodeDTO)
         {
-             
             var result = await _episodeRepo.AddEpisodeAsync(episodeDTO);
+
+            // Kiểm tra kết quả trả về từ repository
             if (result == null)
-                return NotFound("Series không tồn tại");
+                return NotFound(new { Message = "Series không tồn tại." });
 
             return CreatedAtAction(nameof(GetEpisode), new { episodeId = result.EpisodeId }, result);
         }
+
+
+
+
 
 
 
@@ -84,37 +89,19 @@ namespace Movie.Controllers
         //}
 
         //// PUT: api/AdminEpisode/UpdateEpisode/{episodeId}
-        //[HttpPut("UpdateEpisode/{episodeId}")]
-        //public async Task<IActionResult> UpdateEpisode(int episodeId, [FromBody] RequestEpisodeDTO episodeDTO)
-        //{
-        //    if (episodeId != episodeDTO.EpisodeId)
-        //    {
-        //        return BadRequest("ID tập phim không khớp");
-        //    }
+        // PUT: api/AdminEpisode/UpdateEpisode
+        [HttpPut("UpdateEpisode")]
+        public async Task<IActionResult> UpdateEpisode([FromForm] RequestEpisodeDTO episodeDTO)
+        {
+            var result = await _episodeRepo.UpdateEpisodeAsync(episodeDTO);
 
-        //    var episode = await _episodeRepo.GetByIdAsync(episodeId);
-        //    if (episode == null)
-        //    {
-        //        return NotFound("Tập phim không tồn tại");
-        //    }
+            // Kiểm tra kết quả trả về từ repository
+            if (result == null)
+                return NotFound(new { Message = "Tập phim không tồn tại." });
 
-        //    // Kiểm tra series có tồn tại không
-        //    var series = await _context.Series.FindAsync(episodeDTO.SeriesId);
-        //    if (series == null)
-        //    {
-        //        return NotFound("Series không tồn tại");
-        //    }
+            return Ok(result);  // Trả về kết quả đã được cập nhật
+        }
 
-        //    // Cập nhật thông tin tập phim
-        //    episode.SeriesId = episodeDTO.SeriesId;
-        //    episode.EpisodeNumber = episodeDTO.EpisodeNumber;
-        //    episode.Title = episodeDTO.Title;
-        //    episode.LinkFilmUrl = episodeDTO.LinkFilmUrl;
-
-        //    await _episodeRepo.UpdateAsync(episode);
-
-        //    return NoContent();
-        //}
 
         //// DELETE: api/AdminEpisode/DeleteEpisode/{episodeId}
         //[HttpDelete("DeleteEpisode/{episodeId}")]

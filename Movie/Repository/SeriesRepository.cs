@@ -219,9 +219,9 @@ namespace Movie.Repository
             //}
 
             //Xử lý thêm Category vào MovieCategory
-            if (seriesDTO.CategoriesIds != null && seriesDTO.CategoriesIds.Any())
+            if (seriesDTO.CategoryIds != null && seriesDTO.CategoryIds.Any())
             {
-                string[] categoryId = seriesDTO.CategoriesIds.Split(',');
+                string[] categoryId = seriesDTO.CategoryIds.Split(',');
 
                 foreach (var category in categoryId)
                 {
@@ -234,9 +234,9 @@ namespace Movie.Repository
             }
 
             //  Xử lý thêm Actor vào MovieActors
-            if (seriesDTO.ActorsIds != null && seriesDTO.ActorsIds.Any())
+            if (seriesDTO.ActorIds != null && seriesDTO.ActorIds.Any())
             {
-                string[] actorId = seriesDTO.ActorsIds.Split(',');
+                string[] actorId = seriesDTO.ActorIds.Split(',');
 
                 foreach (var actor in actorId)
                 {

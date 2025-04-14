@@ -48,7 +48,7 @@ namespace Movie.Repository
         );
 
         // Lấy thông tin series theo ID
-        Task<RequestSeriesDTO?> AdminGetSeriesByIdAsync(int id);
+        //Task<RequestSeriesDTO?> AdminGetSeriesByIdAsync(int id);
 
         // Thêm một bộ series mới
         Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile);

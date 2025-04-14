@@ -1,4 +1,6 @@
-﻿namespace Movie.Repository
+﻿using System.Threading.Tasks;
+
+namespace Movie.Repository
 {
     public interface ISeriesCategoryRepository<SeriesCategory>
     {

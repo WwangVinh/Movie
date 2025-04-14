@@ -75,15 +75,15 @@ public class FileUploadOperation : IOperationFilter
             requiredFields = new HashSet<string> { "MovieId", "Title" }; // posterFile and AvatarUrlFile are optional
         }
 
-        //else if (methodName == "AddEpisode")
-        //{
-        //    schemaProperties["SeriesId"] = new OpenApiSchema { Type = "number" };
-        //    schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
-        //    schemaProperties["Title"] = new OpenApiSchema { Type = "string" };
-        //    schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
+        else if (methodName == "UpdateEpisode")
+        {
+            schemaProperties["SeriesId"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["EpisodeNumber"] = new OpenApiSchema { Type = "number" };
+            schemaProperties["Title"] = new OpenApiSchema { Type = "string" };
+            schemaProperties["LinkFilmUrl"] = new OpenApiSchema { Type = "string" };
 
-        //    requiredFields = new HashSet<string> { "SeriesId", "EpisodeNumber", "LinkFilmUrl" };
-        //}
+            requiredFields = new HashSet<string> { "SeriesId", "EpisodeNumber", "LinkFilmUrl" };
+        }
 
         else if (methodName == "AddEpisode")
         {
@@ -95,15 +95,6 @@ public class FileUploadOperation : IOperationFilter
             requiredFields = new HashSet<string> { "SeriesId", "EpisodeNumber", "LinkFilmUrl" };
         }
 
-        else if (methodName == "AddActor")
-        {
-            schemaProperties["NameAct"] = new OpenApiSchema { Type = "string" };
-            schemaProperties["Description"] = new OpenApiSchema { Type = "string" };
-            schemaProperties["Nationality"] = new OpenApiSchema { Type = "string" };
-            schemaProperties["Professional"] = new OpenApiSchema { Type = "string" };
-
-            requiredFields = new HashSet<string> { "NameAct" };
-        }
 
         else if (methodName == "UpdateActor")
         {

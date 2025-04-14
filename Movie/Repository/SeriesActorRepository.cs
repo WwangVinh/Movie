@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 
 namespace Movie.Repository
