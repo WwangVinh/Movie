@@ -28,7 +28,7 @@ namespace Movie.ControllersAdmin
             string sortBy = "ActorId",       // Sắp xếp theo tên actor mặc định
             string sortDirection = "asc",    // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                    // Số trang mặc định là trang 1
-            int pageSize = 10                 // Số lượng actor trên mỗi trang
+            int pageSize = 100                 // Số lượng actor trên mỗi trang
         )
         {
             // Lấy danh sách actor từ repository
@@ -57,7 +57,7 @@ namespace Movie.ControllersAdmin
         }
 
         [HttpPost("AddActor")]
-        public async Task<IActionResult> AddActor( [FromForm] RequestActorDTO actorDTO, IFormFile? AvatarUrlFile)
+        public async Task<IActionResult> AddActor([FromForm] RequestActorDTO actorDTO, IFormFile? AvatarUrlFile)
         {
             var result = await _actorRepository.AddActorAsync(actorDTO, AvatarUrlFile);
             if (result == null)
@@ -86,7 +86,7 @@ namespace Movie.ControllersAdmin
         public async Task<IActionResult> DeleteActor(int id)
         {
             var isDeleted = await _actorRepository.DeleteActorAsync(id);
-            if(!isDeleted) return NotFound("Actor không tồn tại để xóa");
+            if (!isDeleted) return NotFound("Actor không tồn tại để xóa");
 
             return Ok("Actorl được xóa thành công");
         }
