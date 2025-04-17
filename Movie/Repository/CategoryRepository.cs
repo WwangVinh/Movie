@@ -43,7 +43,7 @@ namespace Movie.Repository
             string sortBy = "CategoryId",
             string sortDirection = "asc",
             int page = 1,
-            int pageSize = 10)
+            int pageSize = 5)
         {
             var query = _context.Categories.AsQueryable();
 

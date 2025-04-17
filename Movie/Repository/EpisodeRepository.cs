@@ -13,14 +13,15 @@ namespace Movie.Repository
             _context = context;
         }
 
+        // Thêm một episode mới
         public async Task<RequestEpisodeDTO?> AddEpisodeAsync(RequestEpisodeDTO episodeDTO)
         {
-            // Kiểm tra series có tồn tại không
+            // Kiểm tra series có tồn tại
             var series = await _context.Series.FindAsync(episodeDTO.SeriesId);
             if (series == null) return null;
 
-            // Tạo entity Episode
-            var episode = new Episode
+            // Tạo entity
+            var episode = new Models.Episode
             {
                 SeriesId = episodeDTO.SeriesId,
                 EpisodeNumber = episodeDTO.EpisodeNumber,
@@ -28,15 +29,15 @@ namespace Movie.Repository
                 LinkFilmUrl = episodeDTO.LinkFilmUrl
             };
 
-            // Thêm episode vào DB
             _context.Episodes.Add(episode);
-            await _context.SaveChangesAsync(); // Lưu lại để lấy SeriesId và EpisodeId
+            await _context.SaveChangesAsync();
 
-            // Gán lại EpisodeId vào DTO
+            // Gán lại ID vào DTO
             episodeDTO.EpisodeId = episode.EpisodeId;
 
             return episodeDTO;
         }
+
 
         public async Task<Episode> GetByIdAsync(int episodeId)
         {
@@ -53,22 +54,10 @@ namespace Movie.Repository
                 .ToListAsync();
         }
 
-        // Cập nhật episode
-        public async Task<RequestEpisodeDTO?> UpdateEpisodeAsync(RequestEpisodeDTO episodeDTO)
+        public async Task UpdateAsync(Episode episode)
         {
-            // Kiểm tra xem Episode có tồn tại không
-            var episode = await _context.Episodes.FindAsync(episodeDTO.EpisodeId);
-            if (episode == null) return null;  // Nếu không tìm thấy episode, trả về null
-
-            // Cập nhật các trường cần thiết
-            episode.EpisodeNumber = episodeDTO.EpisodeNumber;
-            episode.Title = episodeDTO.Title;
-            episode.LinkFilmUrl = episodeDTO.LinkFilmUrl;
-
-            // Lưu thay đổi vào DB
+            _context.Episodes.Update(episode);
             await _context.SaveChangesAsync();
-
-            return episodeDTO;  // Trả lại DTO đã được cập nhật
         }
 
         public async Task DeleteAsync(int episodeId)

@@ -11,7 +11,7 @@ namespace Movie.Repository
             string sortBy = "id",
             string sortDirection = "asc",
             int page = 1,
-            int pageSize = 10
+            int pageSize = 5
         );
 
         // Lấy thông tin người dùng theo ID

@@ -44,17 +44,17 @@ namespace Movie.Repository
             string sortBy = "Title",       // Sắp xếp theo tên series mặc định
             string sortDirection = "asc",  // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                  // Số trang mặc định là trang 1
-            int pageSize = 10               // Số lượng series trên mỗi trang
+            int pageSize = 5               // Số lượng series trên mỗi trang
         );
 
         // Lấy thông tin series theo ID
-        //Task<RequestSeriesDTO?> AdminGetSeriesByIdAsync(int id);
+        Task<RequestSeriesDTO?> AdminGetSeriesByIdAsync(int id);
 
         // Thêm một bộ series mới
         Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile);
 
         // Cập nhật thông tin của bộ series
-        Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath);
+        Task<RequestSeriesDTO> UpdateAsync(int id, RequestSeriesDTO seriesDTO, IFormFile? posterFile, IFormFile? AvatarUrlFile);
 
         // Xóa một bộ series hoàn toàn khỏi cơ sở dữ liệu
         Task DeleteSeriesAsync(int id);

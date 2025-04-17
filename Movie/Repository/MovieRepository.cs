@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 using Movie.RequestDTO;
 using Movie.ResponseDTO;
+using Movies.Models;
 
 namespace Movie.Repository
 {
@@ -58,10 +59,10 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            _environment.WebRootPath = "C:\\Vuejs\\BE\\be-base\\Assets\\";
             if (file == null) return null;
 
-            var folderPath = Path.Combine(_environment.WebRootPath, "Movies", folderName);
+            var folderPath = Path.Combine(_environment.WebRootPath, "Assets", folderName);
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -92,8 +93,7 @@ namespace Movie.Repository
                 Rating = movieDTO.Rating,
                 PosterUrl = posterUrl,
                 AvatarUrl = AvatarUrl,
-                LinkFilmUrl = movieDTO.LinkFilmUrl,
-                Nation = movieDTO.Nation,
+                LinkFilmUrl = movieDTO.LinkFilmUrl,              
                 DirectorId = movieDTO.DirectorId,
                 IsHot = movieDTO.IsHot,
                 YearReleased = movieDTO.YearReleased,
@@ -106,8 +106,8 @@ namespace Movie.Repository
             movieDTO.PosterUrl = posterUrl;
             movieDTO.AvatarUrl = AvatarUrl;
 
-
-
+           
+            
             //Xử lý thêm Category vào MovieCategory
             if (movieDTO.CategoryIds != null && movieDTO.CategoryIds.Any())
             {
@@ -145,7 +145,6 @@ namespace Movie.Repository
 
             return movieDTO;
         }
-
 
         public async Task<RequestMovieDTO?> UpdateAsync(int id, RequestMovieDTO movieDTO, IFormFile? posterFile, IFormFile? AvatarUrlFile)
         {
@@ -229,6 +228,8 @@ namespace Movie.Repository
         }
 
 
+
+
         public async Task<IEnumerable<RequestMovieDTO>> GetMovieAsync(int pageNumber, int pageSize, string sortBy, string search, int? categoryID)
         {
             var query = _context.Movies
@@ -269,7 +270,6 @@ namespace Movie.Repository
                 Rating = m.Rating,
                 IsHot = m.IsHot,
                 Nation = m.Nation,
-                Status = m.Status,
                 YearReleased = m.YearReleased,
                 PosterUrl = m.PosterUrl,
                 AvatarUrl = m.AvatarUrl,
@@ -299,7 +299,7 @@ namespace Movie.Repository
             }
             return null;
         }
-
+        
 
         public async Task<RequestMovieDTO> GetMovieByIdAsync(int id)
         {

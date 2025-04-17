@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Movie.Repository
+﻿namespace Movie.Repository
 {
     public interface ISeriesActorRepository<SeriesActor>
     {

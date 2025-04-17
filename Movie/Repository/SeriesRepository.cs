@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Movie.Models;
 using Movie.RequestDTO;
+using Movies.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace Movie.Repository
             string sortBy = "Title",          // Sắp xếp theo tên series mặc định
             string sortDirection = "asc",     // Hướng sắp xếp mặc định là tăng dần
             int page = 1,                    // Số trang
-            int pageSize = 10                 // Số lượng series trên mỗi trang
+            int pageSize = 100                 // Số lượng series trên mỗi trang
         )
         {
             var query = _context.Series.AsQueryable();
@@ -131,7 +132,7 @@ namespace Movie.Repository
         // Lưu ảnh vào thư mục chỉ định
         private async Task<string> SaveFileAsync(IFormFile file, string folderName)
         {
-            _environment.WebRootPath = "C:\\Users\\Admin\\source\\repos\\Movie\\Movie\\Assets\\";
+            _environment.WebRootPath = "C:\\Users\\lqvinh2\\Documents\\Movie-BE\\be-base\\Assets\\";
             if (file == null) return null;
 
             var folderPath = Path.Combine(_environment.WebRootPath, "Series", folderName);
@@ -153,11 +154,11 @@ namespace Movie.Repository
         }
 
 
-        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile seriesPosterFile, IFormFile seriesAvatarUrlFile)
+        public async Task<RequestSeriesDTO> AddSeriesAsync(RequestSeriesDTO seriesDTO, IFormFile posterFile, IFormFile AvatarUrlFile)
         {
             // 1. Upload ảnh poster & avatar
-            var posterUrl = await SaveFileAsync(seriesPosterFile, "Posters");
-            var avatarUrl = await SaveFileAsync(seriesAvatarUrlFile, "AvatarUrl");
+            var posterUrl = await SaveFileAsync(AvatarUrlFile, "Posters");
+            var avatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
 
             // 2. Tạo entity Series
             var series = new Models.Series
@@ -172,7 +173,7 @@ namespace Movie.Repository
                 AvatarUrl = avatarUrl,
                 Status = 1,
                 Nation = seriesDTO.Nation,
-                Season = seriesDTO.Season ??1
+                Season = seriesDTO.Season ?? 1
             };
 
             // 3. Thêm series vào DB
@@ -251,74 +252,157 @@ namespace Movie.Repository
 
             // 7. Lưu toàn bộ thay đổi
             await _context.SaveChangesAsync();
-               
+
 
             return seriesDTO;
         }
 
 
-        // Cập nhật thông tin của bộ series
-        public async Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath)
-        {
-            // Tìm kiếm series theo ID
-            var existingSeries = await _context.Series.FindAsync(id);
 
-            // Kiểm tra nếu không tìm thấy series
-            if (existingSeries == null)
+
+
+        //// Cập nhật thông tin của bộ series
+        //public async Task<RequestSeriesDTO> UpdateSeriesAsync(int id, RequestSeriesDTO seriesDTO, string? posterFilePath, string? avatarFilePath)
+        //{
+        //    // Tìm kiếm series theo ID
+        //    var existingSeries = await _context.Series.FindAsync(id);
+
+        //    // Kiểm tra nếu không tìm thấy series
+        //    if (existingSeries == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    // Cập nhật các thông tin từ seriesDTO (chỉ những trường bạn cần)
+        //    existingSeries.Title = seriesDTO.Title;
+        //    existingSeries.Description = seriesDTO.Description;
+        //    existingSeries.DirectorId = seriesDTO.DirectorId;
+        //    existingSeries.Rating = seriesDTO.Rating;
+        //    existingSeries.IsHot = seriesDTO.IsHot;
+        //    existingSeries.YearReleased = seriesDTO.YearReleased;
+        //    existingSeries.Season = seriesDTO.Season;
+
+        //    // Cập nhật đường dẫn poster nếu có
+        //    if (posterFilePath != null)
+        //    {
+        //        existingSeries.PosterUrl = posterFilePath;
+        //    }
+
+        //    // Cập nhật đường dẫn avatar nếu có
+        //    if (avatarFilePath != null)
+        //    {
+        //        existingSeries.AvatarUrl = avatarFilePath;
+        //    }
+
+        //    // Cập nhật các trường khác nếu cần thiết, ví dụ: LinkFilmUrl, Nation
+
+        //    existingSeries.Nation = seriesDTO.Nation;
+
+        //    // Lưu thay đổi vào cơ sở dữ liệu
+        //    _context.Series.Update(existingSeries);
+        //    await _context.SaveChangesAsync();
+
+        //    // Trả về DTO của series đã được cập nhật
+        //    return new RequestSeriesDTO
+        //    {
+        //        SeriesId = existingSeries.SeriesId,
+        //        Title = existingSeries.Title,
+        //        Description = existingSeries.Description,
+        //        DirectorId = existingSeries.DirectorId,
+        //        Rating = existingSeries.Rating,
+        //        IsHot = existingSeries.IsHot,
+        //        YearReleased = existingSeries.YearReleased,
+        //        Season = existingSeries.Season,
+        //        PosterUrl = existingSeries.PosterUrl,
+        //        AvatarUrl = existingSeries.AvatarUrl,
+        //        Status = existingSeries.Status ?? 0,  // Ensure nullable fields are handled
+
+        //        Nation = existingSeries.Nation
+        //    };
+        //}
+
+
+
+        public async Task<RequestSeriesDTO?> UpdateAsync(int id, RequestSeriesDTO seriesDTO, IFormFile? posterFile, IFormFile? AvatarUrlFile)
+        {
+            var series = await _context.Series
+                .Include(m => m.SeriesCategories)
+                .Include(m => m.SeriesActors)
+                .FirstOrDefaultAsync(m => m.SeriesId == id);
+
+            if (series == null)
             {
                 return null;
             }
 
-            // Cập nhật các thông tin từ seriesDTO (chỉ những trường bạn cần)
-            existingSeries.Title = seriesDTO.Title;
-            existingSeries.Description = seriesDTO.Description;
-            existingSeries.DirectorId = seriesDTO.DirectorId;
-            existingSeries.Rating = seriesDTO.Rating;
-            existingSeries.IsHot = seriesDTO.IsHot;
-            existingSeries.YearReleased = seriesDTO.YearReleased;
-            existingSeries.Season = seriesDTO.Season;
-
-            // Cập nhật đường dẫn poster nếu có
-            if (posterFilePath != null)
+            if (posterFile != null)
             {
-                existingSeries.PosterUrl = posterFilePath;
+                series.PosterUrl = await SaveFileAsync(posterFile, "Posters");
+            }
+            if (AvatarUrlFile != null)
+            {
+                series.AvatarUrl = await SaveFileAsync(AvatarUrlFile, "AvatarUrl");
             }
 
-            // Cập nhật đường dẫn avatar nếu có
-            if (avatarFilePath != null)
+            series.Title = seriesDTO.Title;
+            series.Description = seriesDTO.Description;
+            series.Rating = seriesDTO.Rating;
+
+            series.Nation = seriesDTO.Nation;
+            series.DirectorId = seriesDTO.DirectorId;
+            series.IsHot = seriesDTO.IsHot;
+            series.YearReleased = seriesDTO.YearReleased;
+
+
+            if (seriesDTO.CategoryIds != null && seriesDTO.CategoryIds.Any())
             {
-                existingSeries.AvatarUrl = avatarFilePath;
+                _context.SeriesCategories.RemoveRange(series.SeriesCategories);
+                string[] categoryIds = seriesDTO.CategoryIds.Split(',');
+                foreach (var categoryId in categoryIds)
+                {
+                    if (int.TryParse(categoryId, out int parsedCategoryId))
+                    {
+                        // Kiểm tra xem CategoryId có tồn tại trong bảng Categories không
+                        if (await _context.Categories.AnyAsync(c => c.CategoryId == parsedCategoryId))
+                        {
+                            _context.SeriesCategories.Add(new SeriesCategories
+                            {
+                                SeriesId = series.SeriesId,
+                                CategoryId = parsedCategoryId
+                            });
+                        }
+                    }
+                }
             }
 
-            // Cập nhật các trường khác nếu cần thiết, ví dụ: LinkFilmUrl, Nation
+            if (seriesDTO.ActorIds != null && seriesDTO.ActorIds.Any())
+            {
+                _context.SeriesActors.RemoveRange(series.SeriesActors);
+                string[] actorIds = seriesDTO.ActorIds.Split(',');
+                foreach (var actorId in actorIds)
+                {
+                    if (int.TryParse(actorId, out int parsedActorId))
+                    {
+                        // Kiểm tra xem ActorId có tồn tại trong bảng Actors không
+                        if (await _context.Actors.AnyAsync(a => a.ActorId == parsedActorId))
+                        {
+                            _context.SeriesActors.Add(new SeriesActors
+                            {
+                                SeriesId = series.SeriesId,
+                                ActorId = parsedActorId
+                            });
+                        }
+                    }
+                }
+            }
 
-            existingSeries.Nation = seriesDTO.Nation;
-
-            // Lưu thay đổi vào cơ sở dữ liệu
-            _context.Series.Update(existingSeries);
             await _context.SaveChangesAsync();
 
-            // Trả về DTO của series đã được cập nhật
-            return new RequestSeriesDTO
-            {
-                SeriesId = existingSeries.SeriesId,
-                Title = existingSeries.Title,
-                Description = existingSeries.Description,
-                DirectorId = existingSeries.DirectorId,
-                Rating = existingSeries.Rating,
-                IsHot = existingSeries.IsHot,
-                YearReleased = existingSeries.YearReleased,
-                Season = existingSeries.Season,
-                PosterUrl = existingSeries.PosterUrl,
-                AvatarUrl = existingSeries.AvatarUrl,
-                Status = existingSeries.Status ?? 0,  // Ensure nullable fields are handled
+            seriesDTO.PosterUrl = series.PosterUrl;
+            seriesDTO.AvatarUrl = series.AvatarUrl;
 
-                Nation = existingSeries.Nation
-            };
+            return seriesDTO;
         }
-
-
-
 
 
         // Xóa một bộ series hoàn toàn khỏi cơ sở dữ liệu
