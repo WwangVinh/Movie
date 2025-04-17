@@ -53,13 +53,13 @@ namespace Movie.RequestDTO
 
         public virtual ICollection<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
 
-        //public virtual ICollection<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
+        public virtual ICollection<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
 
-        //public virtual ICollection<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+        public virtual ICollection<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
 
-        public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
+        //public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
 
-        public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
+        //public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO> { };
 
         //public List<RequestEpisodeDTO> Episode { get; set; } = new List<RequestEpisodeDTO>();
     }

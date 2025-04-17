@@ -38,7 +38,7 @@ public partial class RequestMovieDTO
 
     public List<RequestCategoryDTO> Categories { get; set; } = new List<RequestCategoryDTO>();
 
-    public List<RequestActorDTO> Actors {  get; set; } = new List<RequestActorDTO> ();
+    public List<RequestActorDTO> Actors { get; set; } = new List<RequestActorDTO>();
 }
 public class ActorDTO
 {
@@ -47,5 +47,4 @@ public class ActorDTO
     public string NameAct { get; set; }
 
 }
-
 
