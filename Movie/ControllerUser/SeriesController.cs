@@ -2,7 +2,7 @@
 using Movie.Repository;
 using Movie.RequestDTO;
 
-namespace Movie.ControllerWeb
+namespace Movie.ControllerUser
 {
     [Route("api/[controller]")]
     [ApiController]
