@@ -24,7 +24,6 @@ public partial class Series
     public decimal? Rating { get; set; }
 
     public int? Season { get; set; }
-
     [Column("Nation")]
     [StringLength(255)]
     public string? Nation { get; set; }
